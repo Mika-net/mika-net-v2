@@ -1,5 +1,5 @@
 ---
-// FE-15 / FE-41 — the key=value metadata line: date  pillar  reading time  (updated, in amber).
+// FE-15 / FE-41 — the key=value metadata line: date  pillar  reading time  (updated, in the secondary accent).
 import { formatDate, isoDate } from '@/lib/dates';
 import { pillarName, type Pillar } from '@/lib/pillars';
 
@@ -17,8 +17,8 @@ const { pubDate, updatedDate, pillar, minutes, draft } = Astro.props;
   <span class="k">date=</span><time datetime={isoDate(pubDate)}>{formatDate(pubDate)}</time>
   {'  '}<span class="k">pillar=</span><a href={`/posts/#${pillar}`}>{pillarName(pillar).toLowerCase()}</a>
   {minutes && <>{'  '}<span class="k">read=</span>{minutes}min</>}
-  {updatedDate && <>{'  '}<span class="amber">updated={formatDate(updatedDate)}</span></>}
-  {draft && <>{'  '}<span class="amber">draft</span></>}
+  {updatedDate && <>{'  '}<span class="alt">updated={formatDate(updatedDate)}</span></>}
+  {draft && <>{'  '}<span class="alt">draft</span></>}
 </p>
 
 <style>

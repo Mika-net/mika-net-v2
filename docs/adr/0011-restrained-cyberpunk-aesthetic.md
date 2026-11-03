@@ -19,3 +19,7 @@ Dark-first on a near-black blue (never `#000`), IBM Plex Mono for headings, navi
 ## Consequences
 
 The mood is unmistakable without any single element being loud. Contrast ratios are tested in CI, so taste changes cannot break accessibility.
+
+## Amendment — 2026-11-03
+
+After reviewing the prototype Michael judged the blue-black + phosphor-green palette too close to HackerRank's. The accent moved to VT220 amber (`#f5b543`) on a warm graphite (`#0d0c0a`), with the soft green demoted to the secondary token (`--accent-2`). Everything else in this decision stands. Token values are in `docs/requirements/03-frontend.md` FE-10/FE-11.

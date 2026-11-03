@@ -139,8 +139,8 @@ pre {
 .meta .k {
   color: var(--fg-faint);
 }
-.meta .amber {
-  color: var(--amber);
+.meta .alt {
+  color: var(--accent-2);
 }
 
 /* the mono prompt glyph */

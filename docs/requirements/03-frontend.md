@@ -44,26 +44,26 @@ public/
 
 ## Design system — "restrained terminal"
 
-The aesthetic is cyberpunk/hacker in mood and professional in execution. The reader is a hiring manager at a top-tier firm; the design must read as *precise*, not *themed*. The rule for any visual decision: if it would look at home in a well-made terminal emulator or a monospace code editor, it is in; if it would look at home on a gaming peripheral's box, it is out.
+The aesthetic is cyberpunk/hacker in mood — specifically the amber-phosphor terminal — and professional in execution. The reader is a hiring manager at a top-tier firm; the design must read as *precise*, not *themed*. The rule for any visual decision: if it would look at home in a well-made terminal emulator or a monospace code editor, it is in; if it would look at home on a gaming peripheral's box, it is out.
 
-**FE-10** Colour tokens, dark theme (default). Values are the starting point; any change MUST keep the contrast ratios in FE-12.
+**FE-10** Colour tokens, dark theme (default). Revised 2026-11-03 after Michael's review: the accent moved from phosphor green to VT220 amber on a warm graphite, because blue-black plus saturated green read as HackerRank's palette; the soft green became the secondary (`--accent-2`, formerly `--amber`). Any change MUST keep the contrast ratios in FE-12.
 
 ```css
 :root, [data-theme="dark"] {
   color-scheme: dark;
-  --bg:          #0b0f14;   /* near-black blue; never #000 */
-  --bg-elev:     #111821;   /* cards, header */
-  --bg-inset:    #0e1319;   /* code blocks, inset panels */
-  --fg:          #d7dee7;   /* body text */
-  --fg-muted:    #8a97a6;   /* metadata, secondary */
-  --fg-faint:    #5c6876;   /* decorative glyphs, disabled */
-  --accent:      #5cf2a4;   /* phosphor green: links on hover, focus, current item, cursor */
-  --accent-dim:  #2fbf7a;   /* link underlines, borders that carry meaning */
-  --amber:       #f2c14e;   /* the only secondary colour: callouts, "updated" markers */
+  --bg:          #0d0c0a;   /* warm graphite; never #000 */
+  --bg-elev:     #16140f;   /* cards, header */
+  --bg-inset:    #110f0b;   /* code blocks, inset panels */
+  --fg:          #e4ddcf;   /* body text */
+  --fg-muted:    #9d9380;   /* metadata, secondary */
+  --fg-faint:    #6b6252;   /* decorative glyphs, disabled */
+  --accent:      #f5b543;   /* amber phosphor (VT220): links on hover, focus, current item, cursor */
+  --accent-dim:  #c48a2a;   /* link underlines, borders that carry meaning */
+  --accent-2:    #8fd3a0;   /* the only secondary colour: "updated" markers, callouts, drafts */
   --danger:      #ff6b6b;   /* error states only (404, build-time warnings) */
-  --line:        #1f2a36;   /* hairlines */
-  --line-strong: #2d3a48;
-  --selection:   rgba(92, 242, 164, 0.25);
+  --line:        #2a2620;   /* hairlines */
+  --line-strong: #3b352c;
+  --selection:   rgba(245, 181, 67, 0.25);
 }
 ```
 
@@ -72,23 +72,23 @@ The aesthetic is cyberpunk/hacker in mood and professional in execution. The rea
 ```css
 [data-theme="light"] {
   color-scheme: light;
-  --bg:          #f6f5f0;
+  --bg:          #f7f4ec;
   --bg-elev:     #ffffff;
-  --bg-inset:    #eeede6;
-  --fg:          #1b2129;
-  --fg-muted:    #525d69;
-  --fg-faint:    #7d8793;
-  --accent:      #0a6b3f;
-  --accent-dim:  #3f9a6c;
-  --amber:       #8a5f00;
+  --bg-inset:    #efeadf;
+  --fg:          #1f1b14;
+  --fg-muted:    #5c5546;
+  --fg-faint:    #847b6a;
+  --accent:      #8a5a00;
+  --accent-dim:  #b07a1e;
+  --accent-2:    #0a6b3f;
   --danger:      #b42318;
-  --line:        #d9d7cf;
-  --line-strong: #c3c1b8;
-  --selection:   rgba(10, 107, 63, 0.18);
+  --line:        #dcd6c8;
+  --line-strong: #c5bda9;
+  --selection:   rgba(138, 90, 0, 0.18);
 }
 ```
 
-**FE-12** Contrast: `--fg` on `--bg` ≥ 7:1 in both themes; `--fg-muted` on `--bg` ≥ 4.5:1; `--accent` and `--amber` on `--bg` ≥ 4.5:1 wherever they carry text; `--fg-faint` is never used for text that conveys information. A unit test (`tests/tokens.test.ts`) parses `tokens.css` and asserts these ratios so a token tweak cannot silently fail accessibility.
+**FE-12** Contrast: `--fg` on `--bg` ≥ 7:1 in both themes; `--fg-muted` on `--bg` ≥ 4.5:1; `--accent` and `--accent-2` on `--bg` ≥ 4.5:1 wherever they carry text; `--fg-faint` is never used for text that conveys information. A unit test (`tests/tokens.test.ts`) parses `tokens.css` and asserts these ratios so a token tweak cannot silently fail accessibility.
 
 **FE-13** Typography. Two families, self-hosted, latin subset, woff2, weights 400 and 600 only, four files, ≤ 120 KB total, `font-display: swap`, the two above-the-fold files preloaded:
 
@@ -155,9 +155,9 @@ Lighthouse categories Performance, Accessibility, Best Practices, SEO MUST each 
 
 Below the fold: *Selected writing* — posts with `featured: true` (max 3), else the three newest; each as `PostCard` (date, title, description, pillar). Phase 2 adds *Now* (first 240 characters of the newest entry, link) and *Selected projects* (featured projects). Footer.
 
-**FE-41** Post `/posts/[id]/`: `h1` title; `PostMeta` line (date, pillar badge, reading time, `updated` in `--amber` if `updatedDate` present); `Callout` with `note2026` if present; hero image via `<Image>` with `heroAlt` if present (max width = measure, `loading="eager"` since above the fold); body inside `Prose`; `TagList`; a one-line footer "Michael Johnson · Lessons Distilled"; Phase 3: comments slot. No previous/next navigation at MVP; no share buttons ever.
+**FE-41** Post `/posts/[id]/`: `h1` title; `PostMeta` line (date, pillar badge, reading time, `updated` in `--accent-2` if `updatedDate` present); `Callout` with `note2026` if present; hero image via `<Image>` with `heroAlt` if present (max width = measure, `loading="eager"` since above the fold); body inside `Prose`; `TagList`; a one-line footer "Michael Johnson · Lessons Distilled"; Phase 3: comments slot. No previous/next navigation at MVP; no share buttons ever.
 
-**FE-42** Writing index `/posts/`: `h1` "Lessons Distilled" with the tagline "Lessons learned from building things" beneath in mono; posts grouped under `h2` year headings, newest first; each item: date (mono), title (link), description, pillar badge. Drafts show a `draft` badge in `--amber` on dev builds. Phase 2 MAY add a pillar filter as plain links to `/tags/`-style pillar pages (no JavaScript).
+**FE-42** Writing index `/posts/`: `h1` "Lessons Distilled" with the tagline "Lessons learned from building things" beneath in mono; posts grouped under `h2` year headings, newest first; each item: date (mono), title (link), description, pillar badge. Drafts show a `draft` badge in `--accent-2` on dev builds. Phase 2 MAY add a pillar filter as plain links to `/tags/`-style pillar pages (no JavaScript).
 
 **FE-43** About `/about/`: renders `pages/about.md` inside `Prose`; the `## Contact` heading MUST have `id="contact"` (Astro's default heading ids will produce `contact`; assert it in a test). Profile links come from `resume.json`.
 

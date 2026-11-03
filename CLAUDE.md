@@ -31,7 +31,7 @@ This repository (`Mika-net/Mika-netv2`, public) is Michael Johnson's personal si
 - Conventional Commits with requirement IDs in the body (`feat(resume): render /resume/ from resume.json (RES-06, RES-07)`).
 - Every PR description lists the requirement IDs it covers and any it defers, with a reason.
 - Prefer the smallest dependency; justify every new one in one line.
-- When the `frontend-design` skill is available, load it before the first visual pass with `docs/requirements/03-frontend.md` as the brief. The aesthetic is "restrained terminal": dark-first, IBM Plex Mono headings, one phosphor-green accent, no glow, no gradients, no glitch.
+- When the `frontend-design` skill is available, load it before the first visual pass with `docs/requirements/03-frontend.md` as the brief. The aesthetic is "restrained terminal": dark-first on warm graphite, IBM Plex Mono headings, one amber-phosphor accent (VT220) with a soft green secondary, no glow, no gradients, no glitch.
 - Verify before claiming done: run the acceptance criteria in the requirement file and paste the evidence (command output, Lighthouse scores, screenshots) in the PR.
 
 ## State of the code (2026-10-25)

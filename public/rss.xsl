@@ -8,13 +8,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <title><xsl:value-of select="/rss/channel/title"/></title>
         <style>
-          body { font: 17px/1.6 system-ui, sans-serif; background: #0b0f14; color: #d7dee7; margin: 0; padding: 32px 16px; }
+          body { font: 17px/1.6 system-ui, sans-serif; background: #0d0c0a; color: #e4ddcf; margin: 0; padding: 32px 16px; }
           main { max-width: 72ch; margin: 0 auto; }
           h1, h2, .mono { font-family: ui-monospace, Menlo, Consolas, monospace; }
-          a { color: #5cf2a4; }
-          .item { padding: 16px 0; border-top: 1px solid #1f2a36; }
-          .mono { color: #8a97a6; font-size: 13px; }
-          .note { background: #111821; border: 1px solid #1f2a36; padding: 12px 16px; border-radius: 4px; }
+          a { color: #f5b543; }
+          .item { padding: 16px 0; border-top: 1px solid #2a2620; }
+          .mono { color: #9d9380; font-size: 13px; }
+          .note { background: #16140f; border: 1px solid #2a2620; padding: 12px 16px; border-radius: 4px; }
         </style>
       </head>
       <body>

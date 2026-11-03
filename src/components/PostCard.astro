@@ -14,7 +14,7 @@ const { title, description, pubDate, pillar, draft } = post.data;
 <article class="row">
   <p class="meta">
     <time datetime={isoDate(pubDate)}>{formatDate(pubDate)}</time>
-    {draft && <span class="amber">{'  '}draft</span>}
+    {draft && <span class="alt">{'  '}draft</span>}
   </p>
   <h3 class="title"><a href={`/posts/${post.id}/`}>{title}</a></h3>
   <p class="desc">{description}</p>

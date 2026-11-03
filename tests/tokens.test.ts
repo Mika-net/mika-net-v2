@@ -31,13 +31,13 @@ const themes = {
 
 describe.each(Object.entries(themes))('%s theme', (_name, t) => {
   it('has every colour token', () => {
-    for (const k of ['bg', 'bg-elev', 'bg-inset', 'fg', 'fg-muted', 'fg-faint', 'accent', 'accent-dim', 'amber', 'danger', 'line', 'line-strong'])
+    for (const k of ['bg', 'bg-elev', 'bg-inset', 'fg', 'fg-muted', 'fg-faint', 'accent', 'accent-dim', 'accent-2', 'danger', 'line', 'line-strong'])
       expect(t[k], k).toMatch(/^#[0-9a-f]{6}$/);
   });
   it('body text on background ≥ 7:1', () => expect(contrast(t['fg']!, t['bg']!)).toBeGreaterThanOrEqual(7));
   it('muted text on background ≥ 4.5:1', () => expect(contrast(t['fg-muted']!, t['bg']!)).toBeGreaterThanOrEqual(4.5));
   it('accent on background ≥ 4.5:1', () => expect(contrast(t['accent']!, t['bg']!)).toBeGreaterThanOrEqual(4.5));
-  it('amber on background ≥ 4.5:1', () => expect(contrast(t['amber']!, t['bg']!)).toBeGreaterThanOrEqual(4.5));
+  it('secondary accent on background ≥ 4.5:1', () => expect(contrast(t['accent-2']!, t['bg']!)).toBeGreaterThanOrEqual(4.5));
   it('body text on elevated and inset surfaces ≥ 7:1', () => {
     expect(contrast(t['fg']!, t['bg-elev']!)).toBeGreaterThanOrEqual(7);
     expect(contrast(t['fg']!, t['bg-inset']!)).toBeGreaterThanOrEqual(7);
