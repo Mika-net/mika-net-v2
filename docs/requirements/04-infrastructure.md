@@ -1,6 +1,6 @@
 # 04 — Infrastructure: Terraform for S3, CloudFront, ACM, Route 53, OIDC
 
-**Status:** v1.0, 2026-10-24. Implements `docs/DESIGN.md` §8 (D2, D3, D8), §12. Phase 1 unless marked. Lives in the `mika-net-infrastructure` repository; this file is copied there as `docs/REQUIREMENTS.md` and the two copies MUST be kept identical (a CI diff check in the site repo, `05-pipelines.md` PIPE-15).
+**Status:** v1.0, 2026-10-24. Implements `docs/DESIGN.md` §8 (D2, D3, D8), §12. Phase 1 unless marked. Lives in the `mika-net-infrastructure-v2` repository (new on 2026-11-03; the 2025 `mika-net-infrastructure` is kept read-only for history, like `Mika-net`); this file is copied there as `docs/REQUIREMENTS.md` and the two copies MUST be kept identical (a CI diff check in the site repo, `05-pipelines.md` PIPE-15).
 
 ## Purpose
 
@@ -17,7 +17,7 @@ Everything that exists in AWS for mika-net.io is declared in this repository and
 ## Repository layout
 
 ```
-mika-net-infrastructure/
+mika-net-infrastructure-v2/
   README.md                 # how to bootstrap, plan, apply; links here
   CLAUDE.md                 # agent entry point for this repo
   docs/REQUIREMENTS.md      # this file
@@ -30,7 +30,6 @@ mika-net-infrastructure/
     global/                 # hosted zone, ACM certificate, OIDC provider + roles, budget
     dev/                    # static-site module instance for dev.mika-net.io
     prod/                   # static-site module instance for mika-net.io + www
-  legacy/                   # the 2025 DynamoDB/Secrets Manager code, untouched, until INF-50
   .github/workflows/
     plan.yml  apply.yml     # 05-pipelines.md PIPE-20..24
   .terraform-version
@@ -140,10 +139,10 @@ The module MUST include a `terraform test` or a Node script that exercises the f
 
 | Role | `sub` condition | Permissions |
 | --- | --- | --- |
-| `mika-net-site-deploy-dev` | `repo:Mika-net/Mika-netv2:pull_request` | `s3:ListBucket` on the dev bucket; `s3:PutObject`, `s3:DeleteObject` on `dev-bucket/*`; `cloudfront:CreateInvalidation` on the dev distribution ARN |
-| `mika-net-site-deploy-prod` | `repo:Mika-net/Mika-netv2:environment:production` | same, scoped to the prod bucket and distribution |
-| `mika-net-infra-plan` | `repo:Mika-net/mika-net-infrastructure:pull_request` | `ReadOnlyAccess` managed policy plus `s3:GetObject`/`s3:PutObject` on the state bucket's `*.tflock` keys and `s3:GetObject` on state keys (plan reads state and takes the lock) |
-| `mika-net-infra-apply` | `repo:Mika-net/mika-net-infrastructure:environment:production` | an inline policy enumerating the services this repository manages: `s3:*` on the site, logs and state buckets; `cloudfront:*`; `acm:*`; `route53:*` on the zone; `iam:*Role*`, `iam:*Policy*`, `iam:*OpenIDConnectProvider*` scoped to `mika-net-*` names; `budgets:*`; `logs:*` and `athena:*`, `glue:*` for Phase 2. Not `AdministratorAccess`. |
+| `mika-net-site-deploy-dev` | `repo:Mika-net/mika-net-v2:pull_request` | `s3:ListBucket` on the dev bucket; `s3:PutObject`, `s3:DeleteObject` on `dev-bucket/*`; `cloudfront:CreateInvalidation` on the dev distribution ARN |
+| `mika-net-site-deploy-prod` | `repo:Mika-net/mika-net-v2:environment:production` | same, scoped to the prod bucket and distribution |
+| `mika-net-infra-plan` | `repo:Mika-net/mika-net-infrastructure-v2:pull_request` | `ReadOnlyAccess` managed policy plus `s3:GetObject`/`s3:PutObject` on the state bucket's `*.tflock` keys and `s3:GetObject` on state keys (plan reads state and takes the lock) |
+| `mika-net-infra-apply` | `repo:Mika-net/mika-net-infrastructure-v2:environment:production` | an inline policy enumerating the services this repository manages: `s3:*` on the site, logs and state buckets; `cloudfront:*`; `acm:*`; `route53:*` on the zone; `iam:*Role*`, `iam:*Policy*`, `iam:*OpenIDConnectProvider*` scoped to `mika-net-*` names; `budgets:*`; `logs:*` and `athena:*`, `glue:*` for Phase 2. Not `AdministratorAccess`. |
 
 The `environment:production` subjects require the matching GitHub Environments to exist (`docs/HUMAN-TASKS.md`); until they do, the apply workflow cannot assume its role, which is the intended safety.
 
@@ -165,7 +164,7 @@ The `environment:production` subjects require the matching GitHub Environments t
 
 ### Legacy resources
 
-**INF-50** The 2025 code (DynamoDB table `blog-content-dev`, Secrets Manager secret, two IAM policies) moves unchanged into `legacy/` with its local state file git-ignored there, in the first PR of the rebuild. It is destroyed by `terraform destroy` run locally by Michael (or by an agent with his explicit go-ahead in the task) only after the Native AOT measurements for the Phase 2 post are taken (`docs/DESIGN.md` §4). The `mika-net-api` SAM stack is deleted the same way (`sam delete`). Until then nothing in `legacy/` is touched.
+**INF-50** The 2025 code (DynamoDB table `blog-content-dev`, Secrets Manager secret, two IAM policies) stays where it is, in the old `mika-net-infrastructure` repository, which is kept read-only for history exactly like `Mika-net` (Michael's decision, 2026-11-03). Nothing in it is imported into the new repository. Its resources are destroyed by `terraform destroy` run from that old repository, locally, by Michael (or by an agent with his explicit go-ahead) only after the Native AOT measurements for the Phase 2 post are taken (`docs/DESIGN.md` §4). The `mika-net-api` SAM stack is deleted the same way (`sam delete`). Until then nothing there is touched.
 
 ## Implementation notes — 2026-11-03 (draft, nothing applied)
 
@@ -177,7 +176,7 @@ The repository now holds the code described above, written plan-only. Deviations
 - **Reusable role module**: `modules/github-oidc-role` builds one role per (repository, subject) pair; the four roles in INF-23 are four instances of it.
 - The environment roots look up the certificate, zone and OIDC provider by name (`data` sources), so they carry no dependency on `global`'s state file.
 - `.terraform-version` pins 1.17.1 (the current release when written); `required_version` stays `>= 1.11` per INF-01.
-- The 2025 code is moved verbatim into `legacy/` with its local state git-ignored, per INF-50.
+- The 2025 code stays in the old repository; the new repository starts with no history (INF-50, revised).
 
 ## Acceptance criteria
 
@@ -185,7 +184,7 @@ The repository now holds the code described above, written plan-only. Deviations
 - [ ] `plan` on a clean checkout of `envs/dev` and `envs/prod` after bootstrap shows no changes (idempotent).
 - [ ] `curl -sI https://<dev-distribution>.cloudfront.net/posts/SMTP` (with `Host: dev.mika-net.io`) returns 301 to `/posts/SMTP/`; the slashed URL returns 200 with `strict-transport-security`, `content-security-policy` and `x-robots-tag` headers present on dev and absent `x-robots-tag` on prod.
 - [ ] A direct request to the bucket's S3 URL returns 403.
-- [ ] A GitHub Actions job in a PR of `Mika-netv2` can assume `mika-net-site-deploy-dev`; a job on `main` cannot assume it (sub mismatch), and vice versa for prod.
+- [ ] A GitHub Actions job in a PR of `mika-net-v2` can assume `mika-net-site-deploy-dev`; a job on `main` cannot assume it (sub mismatch), and vice versa for prod.
 - [ ] The budget exists with both notifications.
 - [ ] Monthly cost after one full month ≤ US$5 (checked in `docs/HUMAN-TASKS.md`).
 

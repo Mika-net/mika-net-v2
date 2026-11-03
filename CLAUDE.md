@@ -1,6 +1,6 @@
-# CLAUDE.md — Mika-netv2 (the site at mika-net.io)
+# CLAUDE.md — mika-net-v2 (the site at mika-net.io)
 
-This repository (`Mika-net/Mika-netv2`, public) is Michael Johnson's personal site, mika-net.io: a static Astro site, deployed to S3 + CloudFront by GitHub Actions over OIDC, with infrastructure in the sibling repository `mika-net-infrastructure`. It is both a publication and a portfolio piece, so the way it is built matters as much as what it shows.
+This repository (`Mika-net/mika-net-v2`, public) is Michael Johnson's personal site, mika-net.io: a static Astro site, deployed to S3 + CloudFront by GitHub Actions over OIDC, with infrastructure in the sibling repository `mika-net-infrastructure-v2`. It is both a publication and a portfolio piece, so the way it is built matters as much as what it shows.
 
 ## Start here, every session
 

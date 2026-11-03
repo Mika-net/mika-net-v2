@@ -13,7 +13,7 @@ Every change reaches AWS through a workflow in the repository, authenticated by 
 - Branch protection on `main` in both repositories: PR required, the status checks named in PIPE-04 and PIPE-21 required, linear history, no force-push.
 - The infra `apply` workflow needs `TF_VAR_budget_email` as a repository secret (the only secret in either repository).
 
-## Requirements — site repository (`Mika-netv2`)
+## Requirements — site repository (`mika-net-v2`)
 
 ### General
 
@@ -57,9 +57,9 @@ Every change reaches AWS through a workflow in the repository, authenticated by 
 
 **PIPE-14** `renovate.json` at the root of both repositories: `extends: ["config:recommended", ":pinDigests", "helpers:pinGitHubActionDigests"]`, `schedule: ["before 6am on monday"]`, `labels: ["deps"]`, grouped minor/patch updates for npm, separate PRs for Astro majors and Terraform providers, `automerge: false`. If Renovate's GitHub App cannot be installed on the organisation, Dependabot with equivalent `dependabot.yml` (weekly, grouped) is the fallback.
 
-**PIPE-15** Requirements mirror check (in `checks`): `diff docs/requirements/04-infrastructure.md ../mika-net-infrastructure/docs/REQUIREMENTS.md` is not possible in CI across repositories; instead, `ci.yml` fetches `https://raw.githubusercontent.com/Mika-net/mika-net-infrastructure/main/docs/REQUIREMENTS.md` and diffs it against the local file, failing with a message to sync them. Skipped (warning) if the fetch fails.
+**PIPE-15** Requirements mirror check (in `checks`): `diff docs/requirements/04-infrastructure.md ../mika-net-infrastructure-v2/docs/REQUIREMENTS.md` is not possible in CI across repositories; instead, `ci.yml` fetches `https://raw.githubusercontent.com/Mika-net/mika-net-infrastructure-v2/main/docs/REQUIREMENTS.md` and diffs it against the local file, failing with a message to sync them. Skipped (warning) if the fetch fails.
 
-## Requirements — infrastructure repository (`mika-net-infrastructure`)
+## Requirements — infrastructure repository (`mika-net-infrastructure-v2`)
 
 **PIPE-20** `plan.yml` on `pull_request`: for each root in `envs/{global,dev,prod}` as a matrix: checkout; `hashicorp/setup-terraform` pinned; assume `AWS_ROLE_ARN_PLAN`; `terraform init -backend-config="bucket=${TF_STATE_BUCKET}"`; `fmt -check`; `validate`; `tflint`; `plan -no-color -out=tfplan`; post the plan summary (resource counts and the `+/~/-` lines) as one PR comment per root, edited in place. `terraform test` for the router fixtures (`04-infrastructure.md` INF-13).
 
@@ -73,11 +73,11 @@ Every change reaches AWS through a workflow in the repository, authenticated by 
 
 ## Acceptance criteria
 
-- [ ] A PR in `Mika-netv2` produces: a green `build`, `checks`, `deploy-dev`, `lighthouse`; one PR comment with the dev URL and four Lighthouse scores; `resume.pdf` as a build artifact.
+- [ ] A PR in `mika-net-v2` produces: a green `build`, `checks`, `deploy-dev`, `lighthouse`; one PR comment with the dev URL and four Lighthouse scores; `resume.pdf` as a build artifact.
 - [ ] A merge to `main` waits for approval in `production`, deploys, and `smoke` passes with all legacy URLs redirecting.
 - [ ] Workflow wall-clock from push to `smoke` green is under 10 minutes (`docs/DESIGN.md` §1).
 - [ ] No action in either repository is referenced by a mutable tag.
-- [ ] A PR in `mika-net-infrastructure` shows three plan comments; a merge applies `global` then `dev`/`prod` and leaves a second `plan` on the same commit empty.
+- [ ] A PR in `mika-net-infrastructure-v2` shows three plan comments; a merge applies `global` then `dev`/`prod` and leaves a second `plan` on the same commit empty.
 - [ ] Deleting `AWS_ROLE_ARN_DEV` from repository variables makes `deploy-dev` fail at credential exchange, not later (proves no fallback credentials exist).
 
 ## Agent notes

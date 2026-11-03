@@ -1,11 +1,11 @@
 # mika-net.io
 
-[![ci](https://github.com/Mika-net/Mika-netv2/actions/workflows/ci.yml/badge.svg)](https://github.com/Mika-net/Mika-netv2/actions/workflows/ci.yml)
+[![ci](https://github.com/Mika-net/mika-net-v2/actions/workflows/ci.yml/badge.svg)](https://github.com/Mika-net/mika-net-v2/actions/workflows/ci.yml)
 
 Michael Johnson's site: writing under the *Lessons Distilled* imprint, a résumé that is generated from one data file, and a worked example of a static site shipped the way production software is shipped.
 
 - **Live:** https://mika-net.io (dev: https://dev.mika-net.io)
-- **Stack:** Astro 5 · S3 + CloudFront · Terraform (`mika-net-infrastructure`) · GitHub Actions over OIDC
+- **Stack:** Astro 5 · S3 + CloudFront · Terraform (`mika-net-infrastructure-v2`) · GitHub Actions over OIDC
 - **Design document:** [`docs/DESIGN.md`](docs/DESIGN.md)
 - **Requirements by domain:** [`docs/requirements/`](docs/requirements/) — start with `00-overview.md`
 - **Decisions:** [`docs/adr/`](docs/adr/)

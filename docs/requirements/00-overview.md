@@ -40,19 +40,20 @@ Build order for Phase 1: 04 (infra bootstrap and `dev` environment) can run in p
 
 | Repository | GitHub | Purpose | State today |
 | --- | --- | --- | --- |
-| `Mika-netv2` | `Mika-net/Mika-netv2` (public) | The site: Astro project, content, résumé data, site pipelines, these docs | Does not exist yet; this directory is its seed |
-| `mika-net-infrastructure` | `Mika-net/mika-net-infrastructure` | Terraform for everything in AWS | Exists with 2025 DynamoDB/Secrets Manager code; to be replaced per `04-infrastructure.md` |
+| `mika-net-v2` | `Mika-net/mika-net-v2` (public) | The site: Astro project, content, résumé data, site pipelines, these docs | Created 2026-11-03 as `Mika-netv2`, renamed the same day (GitHub redirects the old name) |
+| `mika-net-infrastructure-v2` | `Mika-net/mika-net-infrastructure-v2` (to be created, public) | Terraform for everything in AWS | Drafted 2026-11-03, plan-only |
+| `mika-net-infrastructure` | `Mika-net/mika-net-infrastructure` (private) | The 2025 Terraform (DynamoDB, Secrets Manager) | Kept read-only for history; its resources are destroyed from there after the Phase 2 measurements (INF-50) |
 | `Mika-net` | `Mika-net/Mika-net` (private) | The 2022–2025 Next.js site | Live on AWS Amplify (Git-connected) until cutover; then kept read-only for history |
 | `mika-net-api` | `Mika-net/mika-net-api` | 2025 .NET Native AOT API | Source for one post; then archived |
 
-**Repository naming (2026-11-03):** the site repository is `Mika-net/Mika-netv2`, public, named by Michael. (`mika-net` was ruled out earlier because macOS filesystems and GitHub names are case-insensitive and it collides with the old `Mika-net`.) AWS resource names keep the `mika-net-` prefix.
+**Repository naming (2026-11-03):** second-generation repositories take the old name plus a `-v2` suffix, all lowercase: `mika-net-v2`, `mika-net-infrastructure-v2` (Michael's decision; the site repository was created as `Mika-netv2` and renamed on GitHub the same day). Lowercase because GitHub names are case-insensitive, so capitals carry no information, and everything derived from the name (the npm package name, AWS resource names, the domain) is lowercase by rule. The organisation stays `Mika-net`. A bare `mika-net` was ruled out because macOS filesystems and GitHub names are case-insensitive and it collides with the old `Mika-net`. AWS resource names keep the `mika-net-` prefix.
 
 ## Environments
 
 | Name | Hostname | Deployed from | Robots | Purpose |
 | --- | --- | --- | --- | --- |
-| `prod` | `mika-net.io` (`www` redirects to apex) | push to `main` of `Mika-netv2` | index | The site |
-| `dev` | `dev.mika-net.io` | any same-repository pull request in `Mika-netv2` (last writer wins; fork PRs build but do not deploy) | `noindex` header + `robots.txt` disallow | Preview and Lighthouse CI target |
+| `prod` | `mika-net.io` (`www` redirects to apex) | push to `main` of `mika-net-v2` | index | The site |
+| `dev` | `dev.mika-net.io` | any same-repository pull request in `mika-net-v2` (last writer wins; fork PRs build but do not deploy) | `noindex` header + `robots.txt` disallow | Preview and Lighthouse CI target |
 | `local` | `http://localhost:4321` | `pnpm dev` | — | Authoring |
 
 AWS region for everything: `us-east-1` (required for CloudFront's ACM certificate; everything else follows for simplicity).

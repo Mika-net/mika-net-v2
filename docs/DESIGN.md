@@ -199,7 +199,7 @@ A static site built by Astro, delivered from S3 through CloudFront, provisioned 
 flowchart TB
   subgraph GH[GitHub]
     SR["mika-net.io · site repository<br/>Astro, Markdown posts, resume.json"]
-    IR["mika-net-infrastructure<br/>Terraform: S3, CloudFront, ACM, Route 53, IAM/OIDC"]
+    IR["mika-net-infrastructure-v2<br/>Terraform: S3, CloudFront, ACM, Route 53, IAM/OIDC"]
     SP["Actions · site pipeline<br/>build · checks · resume.pdf · OIDC → s3 sync → invalidate"]
     IP["Actions · infra pipeline<br/>plan on PR · apply on main · state in S3"]
   end
@@ -229,7 +229,7 @@ Each decision is proposed here and tracked in section 15. Full ADRs live as `doc
 | ID | Decision (Proposed) | Alternatives considered | Why this one |
 | --- | --- | --- | --- |
 | D1 | **Astro 5** with content collections, MDX and TypeScript strict; Node LTS; pnpm | Next.js static export (current stack); Hugo; Eleventy | Content-first by design: typed frontmatter, zero client JavaScript unless an island asks for it ([Astro docs, "Islands"](https://docs.astro.build/en/concepts/islands/)). Next.js is an application framework, and its API routes were the on-ramp to the 2025 sprawl. Hugo has no island model for the résumé page. |
-| D2 | **S3 + CloudFront** with Origin Access Control, ACM certificate, Route 53 hosted zone; one `prod` and one `dev` bucket behind two distributions (`mika-net.io`, `dev.mika-net.io`); all in Terraform in `mika-net-infrastructure` | Cloudflare Pages; Vercel (current host) | Michael chose the architecture-as-portfolio path. This is the bounded version: roughly US$1–2/month, every resource in code, nothing to patch. Amplify, Vercel and Cloudflare are the right answer for anyone who did not make that choice. |
+| D2 | **S3 + CloudFront** with Origin Access Control, ACM certificate, Route 53 hosted zone; one `prod` and one `dev` bucket behind two distributions (`mika-net.io`, `dev.mika-net.io`); all in Terraform in `mika-net-infrastructure-v2` | Cloudflare Pages; Vercel (current host) | Michael chose the architecture-as-portfolio path. This is the bounded version: roughly US$1–2/month, every resource in code, nothing to patch. Amplify, Vercel and Cloudflare are the right answer for anyone who did not make that choice. |
 | D3 | **GitHub Actions** with OIDC federation to AWS: build, test, Lighthouse CI budget, render `resume.pdf`, `aws s3 sync`, CloudFront invalidation; `terraform plan` on PR and `apply` on merge in the infra repo | Amplify's Git-connected build (current); Vercel; AWS CodePipeline | No long-lived AWS keys: the workflow exchanges a GitHub-issued token for short-lived credentials, with the role trust policy scoped to this repository and branch ([GitHub Docs, "Configuring OpenID Connect in AWS"](https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services)). The existing pipeline is Amplify console configuration, invisible to anyone reading the repo; this one is code. |
 | D4 | **Comments via giscus**, Phase 3, on posts only | Build GitHub-auth comments on DynamoDB (2025 approach); no comments | Same user-facing result as the 2025 design with zero backend: comments live in GitHub Discussions on the repo ([giscus](https://giscus.app)). "No comments at all" remains acceptable and is the default until Phase 3. |
 | D5 | **Analytics from CloudFront standard logs** to S3, queried with Athena; no client-side script, no cookies, no consent banner | Plausible (paid); Cloudflare Web Analytics (requires a script); Google Analytics | Answers the only questions that matter (which pages, from where, how often the PDF is downloaded) with data Michael already owns. AWS-native and worth one post. |
@@ -335,7 +335,7 @@ The survey found `.env.production` committed to the `Mika-net` repository in com
 
 ### Deploy credentials
 
-No AWS access keys exist anywhere. GitHub Actions assumes two IAM roles over OIDC: a site-deploy role that can only `PutObject`/`DeleteObject` on the two site buckets and `CreateInvalidation` on the two distributions, and an infra role used by the Terraform pipeline with the permissions Terraform needs, trusted only from the `mika-net-infrastructure` repository's `main` branch for `apply`. Role trust policies pin the repository and branch in the `sub` claim.
+No AWS access keys exist anywhere. GitHub Actions assumes two IAM roles over OIDC: a site-deploy role that can only `PutObject`/`DeleteObject` on the two site buckets and `CreateInvalidation` on the two distributions, and an infra role used by the Terraform pipeline with the permissions Terraform needs, trusted only from the `mika-net-infrastructure-v2` repository's `production` environment for `apply`. Role trust policies pin the repository and branch in the `sub` claim.
 
 ### Supply chain
 
@@ -401,7 +401,7 @@ The bands are not to scale: Phase 0 is one week, Phase 3 is a quarter. Each diam
 
 ### Phase 0 — Reset (by Oct 31, 2026)
 
-Rotate the leaked credentials (section 12). Accept or amend the decisions in section 15. Create a fresh `Mika-netv2` repository (public) for the site rather than building on `Mika-net`, whose history carries the secrets; the old repository is archived read-only after cutover. The Amplify deployment keeps serving until Phase 1 cuts over, so the live site never goes dark.
+Rotate the leaked credentials (section 12). Accept or amend the decisions in section 15. Create a fresh `mika-net-v2` repository (public) for the site rather than building on `Mika-net`, whose history carries the secrets; the old repository is archived read-only after cutover. The Amplify deployment keeps serving until Phase 1 cuts over, so the live site never goes dark.
 
 ### Phase 1 — MVP (by Nov 21, 2026)
 
@@ -445,7 +445,7 @@ Change a status here to accept, reject or defer a decision; the section that pro
 | D4 | giscus comments in Phase 3 | 8 | Accepted |
 | D5 | Analytics from CloudFront logs via Athena; no client script | 8 | Accepted |
 | D8 | CloudFront Function for index rewrite and `www` redirect; headers policy | 8 | Accepted |
-| G1 | Fresh `Mika-netv2` repository (public); `Mika-net` archived after cutover | 14 | Accepted |
+| G1 | Fresh `mika-net-v2` repository (public); `Mika-net` archived after cutover | 14 | Accepted |
 | G2 | MVP live by 21 Nov 2026 with the definition of done in section 14 | 14 | Accepted |
 | V1 | Restrained cyberpunk/terminal aesthetic: dark-first, monospace headings and metadata, one phosphor accent; no neon glow, gradients, glitch or scanline effects (added 24 Oct after approval) | 9 | Accepted |
 
@@ -474,7 +474,7 @@ Surveyed 24 Oct 2026 in `~/Documents/repos` on Michael's machine. Dispositions f
 | OpenAPI contract | `Mika-net/swagger-external-api.yaml` (13 KB) | Contract for the .NET API | **Archive**; quote from it in the post if useful |
 | Leaked secrets | `Mika-net/.env.production` (tracked), `Mika-net/DEPLOYMENT.md` line 30 | GitHub OAuth client secret, `NEXTAUTH_SECRET` | **Rotate now**, then delete; rewrite history if ever public (section 12) |
 | .NET 8 Native AOT API | `mika-net-api` (GitHub: `Mika-net/mika-net-api`): controllers, services, SAM `template.yaml`, xunit tests, 26 KB design README | Serverless API for articles, auth and comments on DynamoDB | **Salvage as content** (Native AOT post with measurements), then **archive** and delete the stack |
-| Terraform repository | `mika-net-infrastructure` (GitHub: `Mika-net/mika-net-infrastructure`) | DynamoDB table, Secrets Manager secret, IAM policies; `backend.tf` commented out; local `terraform.tfstate` | **Reuse** the repository: replace contents with the hosting stack (D2), add remote state; destroy the DynamoDB and secret resources after the measurements |
+| Terraform repository | `mika-net-infrastructure` (GitHub: `Mika-net/mika-net-infrastructure`) | DynamoDB table, Secrets Manager secret, IAM policies; `backend.tf` commented out; local `terraform.tfstate` | **Keep read-only for history** (revised 3 Nov 2026: the hosting stack lives in the new `mika-net-infrastructure-v2`); destroy the DynamoDB and secret resources from here after the measurements |
 | Amplify app | AWS Amplify console (not in any repository); corrected 3 Nov 2026 — the survey assumed Vercel from the old repo's docs | Hosting and Git-connected CI for the live site | **Retire** at cutover |
 | Résumé | `Michael_Johnson_Resume.docx` (attached, 614 words) | Current résumé | **Seed** for `resume.json`; the `.docx` is retired when the PDF matches |
 

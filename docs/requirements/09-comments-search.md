@@ -9,7 +9,7 @@ Comments give readers a way to reply and give Michael the user-facing result the
 ## Human prerequisites
 
 - Decide whether comments are wanted at all (`docs/DESIGN.md` §8 says "no comments" remains acceptable).
-- Enable GitHub Discussions on `Mika-net/Mika-netv2`, create a category *Posts* (announcement type, so only maintainers open threads), and install the giscus GitHub App on the repository.
+- Enable GitHub Discussions on `Mika-net/mika-net-v2`, create a category *Posts* (announcement type, so only maintainers open threads), and install the giscus GitHub App on the repository.
 - Choose the moderation stance (GitHub's tools; nothing on the site).
 
 ## Requirements — comments

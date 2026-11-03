@@ -1,6 +1,6 @@
 # 08 — Analytics: CloudFront logs → S3 → Athena
 
-**Status:** v1.0, 2026-10-24. Implements `docs/DESIGN.md` §8 (D5). **Phase 2.** Lives in `mika-net-infrastructure` (Terraform) plus a `docs/analytics/` folder of saved queries in the site repository.
+**Status:** v1.0, 2026-10-24. Implements `docs/DESIGN.md` §8 (D5). **Phase 2.** Lives in `mika-net-infrastructure-v2` (Terraform) plus a `docs/analytics/` folder of saved queries in the site repository.
 
 ## Purpose
 
