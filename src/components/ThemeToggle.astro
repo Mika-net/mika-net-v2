@@ -1,0 +1,38 @@
+---
+// FE-30 — the only interactive control on content pages. Calls window.__toggleTheme from theme.js;
+// the small inline handler is attached by a tiny external script so the CSP needs no hashes.
+---
+
+<button class="toggle" type="button" data-theme-toggle aria-pressed="false" title="Switch theme">
+  <span class="visually-hidden">Switch between dark and light theme</span>
+  <span class="glyph" aria-hidden="true">◐</span>
+</button>
+
+<style>
+  .toggle {
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-control);
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    line-height: 1;
+    width: 32px;
+    height: 32px;
+    display: inline-grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .toggle:hover {
+    color: var(--accent);
+    border-color: var(--line-strong);
+  }
+  .toggle[aria-pressed='true'] .glyph {
+    transform: rotate(180deg);
+  }
+  .glyph {
+    display: inline-block;
+    transition: transform 150ms ease-out;
+  }
+</style>

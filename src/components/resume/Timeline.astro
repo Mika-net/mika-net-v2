@@ -1,0 +1,152 @@
+---
+// RES-20 — a build-time SVG of the career: one row per work entry, bars to scale, gaps left as gaps,
+// current role in the accent. No client JavaScript; <title> gives a native tooltip and the screen-reader name.
+import { resume, workEnd, workStart, roleAnchor } from '@/lib/resume';
+import { formatMonthYear } from '@/lib/dates';
+
+interface Props {
+  /** compact = home page miniature: shorter rows, abbreviated labels */
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+
+const today = new Date();
+const roles = [...resume.work].sort((a, b) => workStart(a).getTime() - workStart(b).getTime());
+const t0 = new Date(Date.UTC(workStart(roles[0]!).getUTCFullYear(), 0, 1));
+const t1 = new Date(Date.UTC(today.getUTCFullYear() + 1, 0, 1));
+const span = t1.getTime() - t0.getTime();
+
+const W = 720;
+const labelW = compact ? 0 : 168;
+const padR = 16;
+const rowH = compact ? 14 : 24;
+const barH = compact ? 8 : 12;
+const axisH = 22;
+const chartX = labelW;
+const chartW = W - labelW - padR;
+const H = axisH + roles.length * rowH + 8;
+
+const x = (d: Date) => chartX + ((d.getTime() - t0.getTime()) / span) * chartW;
+const years: number[] = [];
+for (let y = t0.getUTCFullYear(); y <= t1.getUTCFullYear(); y++) years.push(y);
+
+const rows = roles.map((w, i) => {
+  const s = workStart(w);
+  const e = workEnd(w, today);
+  const current = !w.endDate;
+  const x1 = x(s);
+  const x2 = Math.max(x(e), x1 + 2);
+  // compact labels sit beside the bar: to the right, or to the left when the bar runs to the edge
+  const labelRight = x2 + 72 < chartX + chartW;
+  return {
+    w,
+    current,
+    y: axisH + i * rowH,
+    x1,
+    x2,
+    label: compact ? w.name.replace(/\s*\(.*\)$/, '').replace(/ Inc\.?$/, '') : w.name,
+    labelX: labelRight ? x2 + 6 : x1 - 6,
+    labelAnchor: labelRight ? 'start' : 'end',
+    title: `${w.position}, ${w.name} — ${formatMonthYear(s)} to ${current ? 'present' : formatMonthYear(e)}`,
+    anchor: roleAnchor(w),
+  };
+});
+---
+
+<figure class:list={['timeline', { compact }]}>
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="timeline-title" width="100%">
+    <title id="timeline-title">Career timeline, {years[0]} to present: {roles.length} roles</title>
+    <g class="axis">
+      {
+        years.map((y) => {
+          const d = new Date(Date.UTC(y, 0, 1));
+          const px = x(d);
+          return (
+            <g>
+              <line x1={px} x2={px} y1={axisH - 6} y2={H - 8} />
+              {(!compact || y % 2 === 1) && (
+                <text x={px} y={axisH - 10} text-anchor="middle">
+                  {y}
+                </text>
+              )}
+            </g>
+          );
+        })
+      }
+    </g>
+    {
+      rows.map((r) => (
+        <a href={`/resume/#${r.anchor}`} class:list={['row', { current: r.current }]}>
+          <title>{r.title}</title>
+          {!compact && (
+            <text class="label" x={0} y={r.y + rowH / 2 + 4}>
+              {r.label}
+            </text>
+          )}
+          <rect x={r.x1} y={r.y + (rowH - barH) / 2} width={r.x2 - r.x1} height={barH} rx={2} />
+          {compact && (
+            <text class="label" x={r.labelX} y={r.y + rowH / 2 + 3} text-anchor={r.labelAnchor} aria-hidden="true">
+              {r.label}
+            </text>
+          )}
+        </a>
+      ))
+    }
+  </svg>
+  {!compact && <figcaption class="meta">bars to scale · gaps are gaps · current role in green</figcaption>}
+</figure>
+
+<style>
+  .timeline {
+    margin: var(--space-6) 0;
+  }
+  svg {
+    display: block;
+    overflow: visible;
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .axis line {
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+  .axis text {
+    fill: var(--fg-faint);
+    font-size: 10px;
+  }
+  .row rect {
+    fill: var(--fg-faint);
+  }
+  .row.current rect {
+    fill: var(--accent);
+  }
+  .row .label {
+    fill: var(--fg-muted);
+  }
+  .row:hover rect,
+  .row:focus-visible rect {
+    fill: var(--accent);
+  }
+  .row:hover .label,
+  .row:focus-visible .label {
+    fill: var(--fg);
+  }
+  .compact .row .label {
+    font-size: 9.5px;
+    fill: var(--fg-muted);
+    pointer-events: none;
+  }
+  .compact .row.current .label {
+    fill: var(--fg);
+    font-weight: 600;
+  }
+  .compact .row rect {
+    fill: var(--fg-muted);
+  }
+  .compact .row.current rect {
+    fill: var(--accent);
+  }
+  figcaption {
+    margin-top: var(--space-2);
+  }
+</style>

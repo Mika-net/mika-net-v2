@@ -1,0 +1,52 @@
+---
+// FE-43 — renders pages/about.md; the Contact section id must be "contact" (asserted in tests).
+import { getEntry, render } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Prose from '@/components/Prose.astro';
+import { personJsonLd, resume } from '@/lib/resume';
+
+const page = await getEntry('pages', 'about');
+if (!page) throw new Error('src/content/pages/about.md is missing');
+const { Content } = await render(page);
+const site = (Astro.site ?? new URL('https://mika-net.io')).origin;
+const profiles = resume.basics.profiles.filter((p) => /^https?:\/\//.test(p.url));
+---
+
+<Base
+  title="About"
+  description="Who Michael Johnson is, what he is looking for, and how to reach him."
+  type="profile"
+  jsonLd={personJsonLd(site)}
+>
+  <h1>{page.data.title}</h1>
+  <Prose><Content /></Prose>
+
+  <section id="contact" aria-labelledby="contact-h">
+    <h2 id="contact-h">Contact</h2>
+    <p class="meta">
+      <span class="k">email=</span><a href={`mailto:${resume.basics.email}`}>{resume.basics.email}</a>
+      {
+        profiles.map((p) => (
+          <>
+            {'\n'}
+            <span class="k">{p.network.toLowerCase().replace(/\s+/g, '-')}=</span>
+            <a href={p.url} rel="me noopener">{p.url.replace(/^https?:\/\//, '')}</a>
+          </>
+        ))
+      }
+    </p>
+  </section>
+</Base>
+
+<style>
+  #contact {
+    scroll-margin-top: var(--space-8);
+  }
+  #contact .meta a {
+    color: inherit;
+    text-decoration: none;
+  }
+  #contact .meta a:hover {
+    color: var(--accent);
+  }
+</style>

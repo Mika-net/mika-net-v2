@@ -1,0 +1,50 @@
+---
+// FE-40 / FE-42 — a post in a list: date, title, description, pillar. A list row, not a card with a shadow.
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, isoDate } from '@/lib/dates';
+import PillarBadge from './PillarBadge.astro';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+const { post } = Astro.props;
+const { title, description, pubDate, pillar, draft } = post.data;
+---
+
+<article class="row">
+  <p class="meta">
+    <time datetime={isoDate(pubDate)}>{formatDate(pubDate)}</time>
+    {draft && <span class="amber">{'  '}draft</span>}
+  </p>
+  <h3 class="title"><a href={`/posts/${post.id}/`}>{title}</a></h3>
+  <p class="desc">{description}</p>
+  <PillarBadge pillar={pillar} />
+</article>
+
+<style>
+  .row {
+    padding: var(--space-4) 0;
+    border-top: 1px solid var(--line);
+  }
+  .row:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .meta {
+    margin: 0 0 var(--space-1);
+  }
+  .title {
+    margin: 0 0 var(--space-1);
+    font-size: var(--text-lg);
+  }
+  .title a {
+    text-decoration: none;
+  }
+  .title a:hover {
+    text-decoration: underline;
+  }
+  .desc {
+    margin: 0 0 var(--space-2);
+    color: var(--fg-muted);
+    max-width: 60ch;
+  }
+</style>

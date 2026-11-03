@@ -1,0 +1,31 @@
+---
+// Used for the 2026 note on migrated posts (CNT-16) and similar asides. Amber is the secondary colour.
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<aside class="callout">
+  <p class="label">{label}</p>
+  <div class="body"><slot /></div>
+</aside>
+
+<style>
+  .callout {
+    margin: 0 0 var(--space-6);
+    padding: var(--space-3) var(--space-4);
+    border-left: 2px solid var(--amber);
+    background: var(--bg-elev);
+    border-radius: 0 var(--radius-control) var(--radius-control) 0;
+  }
+  .label {
+    margin: 0 0 var(--space-1);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--amber);
+  }
+  .body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>

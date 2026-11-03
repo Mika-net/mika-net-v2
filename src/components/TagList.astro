@@ -1,0 +1,43 @@
+---
+// Tags as mono chips; only tags with their own index page link (CNT-10).
+interface Props {
+  tags: string[];
+  linkable?: Set<string> | undefined;
+}
+const { tags, linkable } = Astro.props;
+---
+
+{
+  tags.length > 0 && (
+    <ul class="tags" aria-label="Tags">
+      {tags.map((t) => (
+        <li>{linkable?.has(t) ? <a href={`/tags/${t}/`}>{t}</a> : <span>{t}</span>}</li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .tags {
+    list-style: none;
+    margin: var(--space-6) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+  .tags li > * {
+    display: inline-block;
+    padding: 2px var(--space-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-control);
+    color: var(--fg-muted);
+    text-decoration: none;
+  }
+  .tags li > a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+</style>

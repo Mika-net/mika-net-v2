@@ -1,0 +1,64 @@
+---
+// FE-42 — Lessons Distilled: posts grouped by year, newest first.
+import Base from '@/layouts/Base.astro';
+import PostCard from '@/components/PostCard.astro';
+import { getVisiblePosts, groupByYear } from '@/lib/posts';
+import { PILLAR_NAMES } from '@/lib/pillars';
+
+const posts = await getVisiblePosts();
+const years = groupByYear(posts);
+const site = (Astro.site ?? new URL('https://mika-net.io')).origin;
+const blogLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: 'Lessons Distilled',
+  url: `${site}/posts/`,
+  author: { '@id': `${site}/#person` },
+  blogPost: posts.slice(0, 10).map((p) => ({
+    '@type': 'BlogPosting',
+    headline: p.data.title,
+    url: `${site}/posts/${p.id}/`,
+    datePublished: p.data.pubDate.toISOString(),
+  })),
+};
+---
+
+<Base
+  title="Lessons Distilled"
+  description="Lessons learned from building things: writing by Michael Johnson on running production, architecture on AWS and .NET, engineering judgement and AI-assisted engineering."
+  jsonLd={blogLd}
+>
+  <h1>Lessons Distilled</h1>
+  <p class="tagline">Lessons learned from building things.</p>
+  <p class="meta pillars">
+    {Object.entries(PILLAR_NAMES).map(([id, name], i) => (
+      <>{i > 0 && '  '}<span class="k">#</span><span id={id}>{name.toLowerCase()}</span></>
+    ))}
+  </p>
+
+  {
+    years.map(([year, list]) => (
+      <section aria-labelledby={`y-${year}`}>
+        <h2 id={`y-${year}`}>{year}</h2>
+        <div>{list.map((post) => <PostCard post={post} />)}</div>
+      </section>
+    ))
+  }
+</Base>
+
+<style>
+  .tagline {
+    font-family: var(--font-mono);
+    color: var(--fg-muted);
+    margin-bottom: var(--space-2);
+  }
+  .pillars {
+    margin-bottom: var(--space-8);
+  }
+  section h2 {
+    font-size: var(--text-lg);
+    color: var(--fg-muted);
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-2);
+  }
+</style>

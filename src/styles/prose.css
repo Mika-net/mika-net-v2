@@ -1,0 +1,109 @@
+/* Rendered Markdown — used through <Prose>. FE-15 heading marks, FE-17 code blocks. */
+.prose {
+  max-width: var(--measure);
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose h2::before {
+  content: '## ';
+  color: var(--fg-faint);
+  font-weight: 400;
+}
+.prose h3::before {
+  content: '### ';
+  color: var(--fg-faint);
+  font-weight: 400;
+}
+
+.prose blockquote {
+  margin: var(--space-6) 0;
+  padding: 0 0 0 var(--space-4);
+  border-left: 2px solid var(--accent-dim);
+  color: var(--fg-muted);
+}
+.prose blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.4em;
+  margin: 0 0 var(--space-4);
+}
+.prose li + li {
+  margin-top: var(--space-1);
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-control);
+}
+
+.prose table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: var(--measure-wide);
+  font-size: var(--text-sm);
+  margin: var(--space-6) 0;
+}
+.prose th,
+.prose td {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.prose th {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: var(--text-xs);
+}
+
+.prose :not(pre) > code {
+  background: var(--bg-inset);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 1px 4px;
+}
+
+/* FE-17 — Shiki dual theme, selected by [data-theme]; horizontal scroll, no wrap */
+.prose pre {
+  position: relative;
+  max-width: var(--measure-wide);
+  margin: var(--space-6) 0;
+  padding: var(--space-4);
+  background: var(--bg-inset) !important;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  overflow-x: auto;
+  line-height: 1.5;
+  font-size: var(--text-sm);
+}
+.prose pre code {
+  font-size: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.prose pre[data-language]::after {
+  content: attr(data-language);
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--fg-faint);
+}
+
+[data-theme='dark'] .astro-code,
+[data-theme='dark'] .astro-code span {
+  color: var(--shiki-dark) !important;
+}
+[data-theme='light'] .astro-code,
+[data-theme='light'] .astro-code span {
+  color: var(--shiki-light) !important;
+}

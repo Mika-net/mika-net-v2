@@ -1,0 +1,28 @@
+---
+// CNT-10 — a tag page exists only for tags with two or more non-draft posts.
+import Base from '@/layouts/Base.astro';
+import PostCard from '@/components/PostCard.astro';
+import { getLinkableTags } from '@/lib/posts';
+
+export async function getStaticPaths() {
+  const byTag = await getLinkableTags();
+  return [...byTag.entries()].map(([tag, posts]) => ({ params: { tag }, props: { tag, posts } }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<Base title={`Posts tagged ${tag}`} description={`${posts.length} posts by Michael Johnson tagged ${tag}, from the Lessons Distilled archive.`}>
+  <h1><span class="k">#</span>{tag}</h1>
+  <p class="meta">posts={posts.length}  <a href="/posts/">all posts</a></p>
+  <div>{posts.map((post) => <PostCard post={post} />)}</div>
+</Base>
+
+<style>
+  h1 .k {
+    color: var(--accent-dim);
+  }
+  .meta {
+    margin-bottom: var(--space-6);
+  }
+</style>

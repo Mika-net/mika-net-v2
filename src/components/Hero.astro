@@ -1,0 +1,89 @@
+---
+// FE-40 — h1, the prompt line with blinking cursor, proof points, three actions.
+import { hero, proofPoints, actions } from '@/data/home';
+import { verifiedProofPoints } from '@/lib/resume';
+
+const points = verifiedProofPoints(proofPoints);
+---
+
+<section class="hero" aria-labelledby="name">
+  <h1 id="name">{hero.name}</h1>
+  <p class="line">
+    <span class="prompt" aria-hidden="true">❯</span>
+    <span>{hero.line}</span><span class="cursor" aria-hidden="true"></span>
+  </p>
+  <ul class="proof" aria-label="Proof points">
+    {
+      points.map((p) => (
+        <li>
+          <a href={p.href}>{p.label}</a>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="actions">
+    {
+      actions.map((a) => (
+        <a class:list={['btn', { 'btn--primary': a.primary }]} href={a.href}>
+          {a.label}
+        </a>
+      ))
+    }
+  </p>
+</section>
+
+<style>
+  .hero {
+    padding-top: var(--space-4);
+  }
+  h1 {
+    margin-bottom: var(--space-3);
+  }
+  .line {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    line-height: 1.45;
+    max-width: 44ch;
+    margin: 0 0 var(--space-8);
+    text-wrap: pretty;
+  }
+  .line .prompt {
+    margin-right: 0.4em;
+  }
+  .proof {
+    list-style: none;
+    margin: 0 0 var(--space-8);
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: var(--space-3);
+    max-width: 640px;
+  }
+  .proof li {
+    border-left: 2px solid var(--accent-dim);
+    padding-left: var(--space-3);
+  }
+  .proof a {
+    display: block;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: var(--text-md);
+    text-decoration: none;
+  }
+  .proof a::after {
+    content: 'see the evidence';
+    display: block;
+    font-weight: 400;
+    font-size: var(--text-xs);
+    color: var(--fg-faint);
+  }
+  .proof a:hover::after {
+    color: var(--accent-dim);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin: 0;
+  }
+</style>

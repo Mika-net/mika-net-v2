@@ -1,0 +1,34 @@
+---
+// FE-46 — static 404 in the terminal idiom. CloudFront maps S3 403/404 to this page (INF-14).
+import Base from '@/layouts/Base.astro';
+---
+
+<Base title="Not found" description="There is nothing at this address." noindex>
+  <h1 class="visually-hidden">Page not found</h1>
+  <pre class="term" aria-hidden="true">
+<span class="prompt">$</span> cat /this/page
+cat: /this/page: No such file or directory
+<span class="prompt">$</span> <span class="cursor"></span></pre>
+  <p>There is nothing at this address. The old posts kept their URLs, so if you followed a link here it was probably mistyped.</p>
+  <p class="links">
+    <a href="/">Home</a> · <a href="/posts/">Writing</a> · <a href="/resume/">Résumé</a>
+  </p>
+</Base>
+
+<style>
+  .term {
+    font-family: var(--font-mono);
+    font-size: var(--text-md);
+    line-height: 1.6;
+    margin: var(--space-4) 0 var(--space-8);
+    padding: var(--space-4);
+    background: var(--bg-inset);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-control);
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .links {
+    font-family: var(--font-mono);
+  }
+</style>

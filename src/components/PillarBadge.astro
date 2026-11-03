@@ -1,0 +1,24 @@
+---
+// A pillar label: text plus an accent mark; never colour alone (FE-50).
+import { pillarName, type Pillar } from '@/lib/pillars';
+
+interface Props {
+  pillar: Pillar;
+}
+const { pillar } = Astro.props;
+---
+
+<span class="pillar"><span class="mark" aria-hidden="true">#</span>{pillarName(pillar)}</span>
+
+<style>
+  .pillar {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--fg-muted);
+    white-space: nowrap;
+  }
+  .mark {
+    color: var(--accent-dim);
+    margin-right: 2px;
+  }
+</style>

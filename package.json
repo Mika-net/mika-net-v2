@@ -1,0 +1,37 @@
+{
+  "name": "mika-netv2",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && node scripts/check-placeholders.mjs",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run",
+    "new": "node scripts/new.mjs",
+    "migrate:posts": "node scripts/migrate-posts.mjs",
+    "resume:pdf": "node scripts/render-resume-pdf.mjs"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^8.1.1",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "astro": "^7.4.2",
+    "sharp": "^0.35.5",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "gray-matter": "^4.0.3",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.5",
+    "playwright": "^1.63.0"
+  }
+}

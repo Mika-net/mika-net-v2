@@ -1,0 +1,24 @@
+---
+// FE-50 — first focusable element on every page.
+---
+
+<a class="skip" href="#main">Skip to content</a>
+
+<style>
+  .skip {
+    position: absolute;
+    left: var(--gutter);
+    top: -100px;
+    z-index: 10;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-elev);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-control);
+    text-decoration: none;
+  }
+  .skip:focus-visible {
+    top: var(--space-2);
+  }
+</style>

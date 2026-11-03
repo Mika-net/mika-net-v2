@@ -1,0 +1,8 @@
+{
+  "name": "Michael Johnson",
+  "short_name": "mika-net.io",
+  "icons": [{ "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }],
+  "theme_color": "#0b0f14",
+  "background_color": "#0b0f14",
+  "display": "browser"
+}

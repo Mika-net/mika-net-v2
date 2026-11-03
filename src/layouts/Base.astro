@@ -1,0 +1,45 @@
+---
+// Base layout: <html lang="en">, Head, skip link, header, <main id="main">, footer. FE-03, FE-50.
+import Head from '@/components/Head.astro';
+import SkipLink from '@/components/SkipLink.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  type?: string | undefined;
+  image?: string | undefined;
+  imageAlt?: string | undefined;
+  publishedTime?: Date | undefined;
+  modifiedTime?: Date | undefined;
+  tags?: string[] | undefined;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[] | undefined;
+  noindex?: boolean | undefined;
+  /** widen main for pages that need it (résumé) */
+  wide?: boolean;
+}
+
+const { wide = false, ...head } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <Head {...head} />
+  </head>
+  <body class="grid">
+    <SkipLink />
+    <Header />
+    <main id="main" class:list={[{ wide }]}>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  main.wide {
+    max-width: calc(var(--measure-wide) + 2 * var(--gutter));
+  }
+</style>

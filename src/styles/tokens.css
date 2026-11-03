@@ -1,0 +1,78 @@
+/* FE-10 / FE-11 / FE-14 / FE-18 — design tokens. Names are the contract; values may change in a PR
+   as long as tests/tokens.test.ts (FE-12 contrast ratios) still passes. */
+
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0b0f14;
+  --bg-elev: #111821;
+  --bg-inset: #0e1319;
+  --fg: #d7dee7;
+  --fg-muted: #8a97a6;
+  --fg-faint: #5c6876;
+  --accent: #5cf2a4;
+  --accent-dim: #2fbf7a;
+  --amber: #f2c14e;
+  --danger: #ff6b6b;
+  --line: #1f2a36;
+  --line-strong: #2d3a48;
+  --selection: rgba(92, 242, 164, 0.25);
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f6f5f0;
+  --bg-elev: #ffffff;
+  --bg-inset: #eeede6;
+  --fg: #1b2129;
+  --fg-muted: #525d69;
+  --fg-faint: #7d8793;
+  --accent: #0a6b3f;
+  --accent-dim: #3f9a6c;
+  --amber: #8a5f00;
+  --danger: #b42318;
+  --line: #d9d7cf;
+  --line-strong: #c3c1b8;
+  --selection: rgba(10, 107, 63, 0.18);
+}
+
+:root {
+  /* type — FE-13 / FE-14 */
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-md: clamp(1.0625rem, 1rem + 0.25vw, 1.125rem);
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 1.875rem);
+  --text-3xl: clamp(1.875rem, 1.5rem + 1.5vw, 2.25rem);
+
+  --leading-body: 1.6;
+  --leading-heading: 1.2;
+  --leading-mono: 1.4;
+
+  --measure: 72ch;
+  --measure-wide: 90ch;
+
+  /* spacing — FE-18 */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  --radius-control: 4px;
+  --radius-card: 8px;
+  --gutter: 16px;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --gutter: 24px;
+  }
+}

@@ -1,0 +1,93 @@
+---
+// FE-47 — site name left, mono lowercase nav right, theme toggle far right. No JavaScript, no hamburger.
+import ThemeToggle from './ThemeToggle.astro';
+
+const items = [
+  { href: '/posts/', label: 'writing' },
+  { href: '/resume/', label: 'résumé' },
+  { href: '/about/', label: 'about' },
+];
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="/" aria-label="Michael Johnson, home">
+      <span class="prompt" aria-hidden="true">~</span>
+      <span class="brand-name">michael johnson</span>
+    </a>
+    <nav aria-label="Primary">
+      <ul>
+        {
+          items.map((it) => (
+            <li>
+              <a href={it.href} aria-current={isCurrent(it.href) ? 'page' : undefined}>
+                {it.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <ThemeToggle />
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(6px);
+  }
+  .inner {
+    max-width: calc(var(--measure) + 2 * var(--gutter));
+    margin-inline: auto;
+    padding: var(--space-3) var(--gutter);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    text-decoration: none;
+    margin-right: auto;
+  }
+  .brand .prompt {
+    font-weight: 400;
+  }
+  nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: var(--space-4);
+  }
+  nav a {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    color: var(--fg-muted);
+    padding: var(--space-1) 0;
+    border-bottom: 2px solid transparent;
+  }
+  nav a:hover {
+    color: var(--fg);
+  }
+  nav a[aria-current='page'] {
+    color: var(--fg);
+    border-bottom-color: var(--accent);
+  }
+  @media (max-width: 639px) {
+    nav {
+      order: 3;
+      width: 100%;
+    }
+  }
+</style>

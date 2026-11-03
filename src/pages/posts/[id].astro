@@ -1,0 +1,128 @@
+---
+// FE-41 — a post. CNT-10: the route is /posts/[id]/ with id = the collection entry id (case preserved).
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '@/layouts/Base.astro';
+import Prose from '@/components/Prose.astro';
+import PostMeta from '@/components/PostMeta.astro';
+import TagList from '@/components/TagList.astro';
+import Callout from '@/components/Callout.astro';
+import { getVisiblePosts, getLinkableTags } from '@/lib/posts';
+import { readingTime } from '@/lib/reading-time';
+import { pillarName } from '@/lib/pillars';
+
+export async function getStaticPaths() {
+  const posts = await getVisiblePosts();
+  return posts.map((post) => ({ params: { id: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { title, description, pubDate, updatedDate, pillar, tags, heroImage, heroAlt, draft, note2026 } = post.data;
+const { minutes, words } = readingTime(post.body);
+const linkable = new Set((await getLinkableTags()).keys());
+const site = (Astro.site ?? new URL('https://mika-net.io')).origin;
+const url = `${site}/posts/${post.id}/`;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: title,
+    description,
+    datePublished: pubDate.toISOString(),
+    dateModified: (updatedDate ?? pubDate).toISOString(),
+    author: { '@id': `${site}/#person` },
+    publisher: { '@id': `${site}/#person` },
+    mainEntityOfPage: url,
+    keywords: tags,
+    wordCount: words,
+    articleSection: pillarName(pillar),
+    isPartOf: { '@type': 'Blog', name: 'Lessons Distilled', url: `${site}/posts/` },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${site}/` },
+      { '@type': 'ListItem', position: 2, name: 'Writing', item: `${site}/posts/` },
+      { '@type': 'ListItem', position: 3, name: title, item: url },
+    ],
+  },
+];
+---
+
+<Base
+  title={title}
+  description={description}
+  type="article"
+  publishedTime={pubDate}
+  modifiedTime={updatedDate}
+  tags={tags}
+  image={heroImage ? heroImage.src : undefined}
+  imageAlt={heroAlt}
+  jsonLd={jsonLd}
+  noindex={draft}
+>
+  <article>
+    <header class="post-header">
+      <h1>{title}</h1>
+      <PostMeta pubDate={pubDate} updatedDate={updatedDate} pillar={pillar} minutes={minutes} draft={draft} />
+    </header>
+
+    {
+      note2026 && (
+        <Callout label="2026 note">
+          <p>{note2026}</p>
+        </Callout>
+      )
+    }
+
+    {
+      heroImage && heroAlt && (
+        <figure class="hero-image">
+          <Image src={heroImage} alt={heroAlt} widths={[480, 720, 1080]} sizes="(max-width: 720px) 100vw, 720px" loading="eager" />
+        </figure>
+      )
+    }
+
+    <Prose><Content /></Prose>
+
+    <TagList tags={tags} linkable={linkable} />
+
+    <footer class="post-footer meta">
+      <span class="k">by=</span>Michael Johnson{'  '}<span class="k">imprint=</span><a href="/posts/">lessons distilled</a>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .post-header {
+    margin-bottom: var(--space-8);
+  }
+  .post-header h1 {
+    margin-bottom: var(--space-3);
+  }
+  .hero-image {
+    margin: 0 0 var(--space-8);
+  }
+  .hero-image :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-control);
+    border: 1px solid var(--line);
+  }
+  .post-footer {
+    margin-top: var(--space-8);
+    padding-top: var(--space-4);
+    border-top: 1px dashed var(--line);
+  }
+  .post-footer a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .post-footer a:hover {
+    color: var(--accent);
+  }
+</style>

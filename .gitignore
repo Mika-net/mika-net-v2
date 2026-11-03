@@ -1,0 +1,23 @@
+# dependencies and build
+node_modules/
+dist/
+.astro/
+.output/
+
+# environment and secrets — never commit values
+.env
+.env.*
+!.env.example
+
+# tooling
+.DS_Store
+*.log
+coverage/
+.lighthouseci/
+playwright-report/
+test-results/
+
+# editor
+.idea/
+.vscode/*
+!.vscode/extensions.json

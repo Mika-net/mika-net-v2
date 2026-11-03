@@ -1,0 +1,66 @@
+---
+// FE-48 — now · rss · colophon / profiles with rel="me" / email / copyright through the build year.
+import { resume } from '@/lib/resume';
+
+const year = new Date().getUTCFullYear();
+const profiles = resume.basics.profiles.filter((p) => /^https?:\/\//.test(p.url));
+---
+
+<footer class="site-footer">
+  <div class="inner">
+    <ul class="links" aria-label="Site">
+      <li><a href="/now/">now</a></li>
+      <li><a href="/rss.xml">rss</a></li>
+      <li><a href="/colophon/">colophon</a></li>
+    </ul>
+    <ul class="links" aria-label="Elsewhere">
+      {
+        profiles.map((p) => (
+          <li>
+            <a href={p.url} rel="me noopener">
+              {p.network.toLowerCase()}
+            </a>
+          </li>
+        ))
+      }
+      <li><a href={`mailto:${resume.basics.email}`}>{resume.basics.email}</a></li>
+    </ul>
+    <p class="meta">© Michael Johnson, 2022–{year}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--line);
+    margin-top: auto;
+  }
+  .inner {
+    max-width: calc(var(--measure) + 2 * var(--gutter));
+    margin-inline: auto;
+    padding: var(--space-6) var(--gutter) var(--space-8);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-8);
+    align-items: baseline;
+  }
+  .links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+  .links a {
+    text-decoration: none;
+    color: var(--fg-muted);
+  }
+  .links a:hover {
+    color: var(--accent);
+  }
+  .meta {
+    margin: 0 0 0 auto;
+  }
+</style>

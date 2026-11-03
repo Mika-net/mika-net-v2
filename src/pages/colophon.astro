@@ -1,0 +1,35 @@
+---
+// FE-45 — how the site is built, in ten sentences at most. Links to the posts as they are written.
+import Base from '@/layouts/Base.astro';
+import Prose from '@/components/Prose.astro';
+---
+
+<Base title="Colophon" description="How mika-net.io is built: Astro, S3 and CloudFront, Terraform, GitHub Actions over OIDC.">
+  <h1>Colophon</h1>
+  <Prose>
+    <p>
+      This site is a set of files. Posts are Markdown in a git repository; <a href="https://astro.build" rel="noopener">Astro</a>
+      turns them into HTML at build time and ships no JavaScript to content pages except the theme switch.
+    </p>
+    <p>
+      The résumé is one JSON file that produces the web page, the PDF and the structured data, so none of them can disagree.
+    </p>
+    <p>
+      A commit to <code>main</code> runs a GitHub Actions workflow that builds, checks links and a performance budget, assumes an
+      AWS role through OIDC (no stored keys), syncs the files to a private S3 bucket and invalidates CloudFront.
+    </p>
+    <p>
+      Everything in AWS — buckets, distribution, certificate, DNS, the four-line routing function, the IAM roles — is declared in
+      Terraform in a second repository and applied by its own pipeline.
+    </p>
+    <p>
+      Analytics, when enabled, are CloudFront's own access logs queried with Athena: no cookies, no scripts, no consent banner.
+    </p>
+    <p>
+      Type is IBM Plex Mono and IBM Plex Sans, self-hosted. The dark theme is the default; the light one is a paper mode, not an inversion.
+    </p>
+    <p>
+      The design document and every requirement these choices came from are in the repository under <code>docs/</code>.
+    </p>
+  </Prose>
+</Base>

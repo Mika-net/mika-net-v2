@@ -1,0 +1,188 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
+  "meta": {
+    "version": "1.0.0",
+    "lastModified": "2026-10-24",
+    "lenses": {
+      "leadership": {
+        "name": "Leadership",
+        "description": "Running teams and production: hiring, review practice, on-call, incident reduction."
+      },
+      "architecture": {
+        "name": "Architecture",
+        "description": "Cloud-first, event-driven and serverless design on AWS and .NET; cost and performance trade-offs."
+      },
+      "consulting": {
+        "name": "Consulting",
+        "description": "Client-facing delivery, proposals and relationships at consultancies and with client teams."
+      }
+    }
+  },
+  "basics": {
+    "name": "Michael Johnson",
+    "label": "Lead Engineer",
+    "email": "mika@mika-net.io",
+    "url": "https://mika-net.io",
+    "summary": "Lead engineer with nine years of experience building cloud-first, event-driven systems on AWS with .NET and consumer-facing web applications in Angular and React. Currently manages nine developers and production support for a healthcare navigation product serving millions of users. Background spans healthcare, benefits, energy, e-commerce, and media.",
+    "location": {
+      "city": "Chicago area",
+      "region": "IL",
+      "countryCode": "US"
+    },
+    "profiles": [
+      { "network": "GitHub", "username": "TODO(michael)", "url": "TODO(michael)" },
+      { "network": "LinkedIn", "username": "TODO(michael)", "url": "TODO(michael)" },
+      { "network": "Stack Overflow", "username": "TODO(michael)", "url": "TODO(michael)" }
+    ]
+  },
+  "work": [
+    {
+      "name": "Alight",
+      "position": "Lead Engineer",
+      "location": "Remote",
+      "startDate": "2025-01-01",
+      "summary": "Healthcare Navigation product connecting millions of users with providers, specialists, insurance guidance, and live agents.",
+      "highlights": [
+        {
+          "text": "Manage a team of nine onshore and offshore developers, the only engineers supporting the production Healthcare Navigation product, which connects millions of users with providers, specialists, insurance guidance, and live agents.",
+          "lenses": ["leadership"]
+        },
+        {
+          "text": "Own hundreds of repositories on a .NET, Java, AWS, SQL, and Angular stack with an event-driven architecture, making architectural decisions for new features and reworking layers that fail under load into scalable designs, while writing code 20–50% of the time.",
+          "lenses": ["architecture", "leadership"]
+        },
+        {
+          "text": "Serve as the sole 24/7 on-call engineer under a zero-outage policy; led many major incidents and reduced production incidents by 87.3% through quality gates, improved code design, and clearing the ticket backlog.",
+          "lenses": ["leadership"]
+        },
+        {
+          "text": "Introduced code reviews with a \"desk check\" in which developers demo the happy path, expected failure conditions, and regression tests and explain the change.",
+          "lenses": ["leadership"]
+        },
+        {
+          "text": "Release daily or biweekly depending on change-management requirements; hire and onboard developers.",
+          "lenses": ["leadership"]
+        }
+      ]
+    },
+    {
+      "name": "CapTech",
+      "position": "Senior Engineer",
+      "location": "Remote",
+      "startDate": "2023-03-01",
+      "endDate": "2024-06-01",
+      "highlights": [
+        {
+          "text": "Designed cloud-first, event-driven inventory management systems on AWS Lambda, .NET, and SQL Server, using machine learning to match inventory items across multiple CRMs.",
+          "lenses": ["architecture", "consulting"]
+        },
+        {
+          "text": "Migrated AWS Lambda applications to .NET 8 with Native AOT compilation, cutting cold-start times by up to 86% versus JIT-compiled .NET.",
+          "lenses": ["architecture"]
+        },
+        {
+          "text": "Built a consumer-facing Angular web application that lets users create items and record sets of matching items."
+        },
+        {
+          "text": "Managed relationships with client and consultant development teams delivering healthcare applications.",
+          "lenses": ["consulting"]
+        }
+      ]
+    },
+    {
+      "name": "WellRight Inc.",
+      "position": "Engineer",
+      "location": "Remote",
+      "startDate": "2022-03-01",
+      "endDate": "2023-03-01",
+      "highlights": [
+        {
+          "text": "Designed and built .NET Core 3 and .NET 6 microservices to replace legacy monolith functionality, using event-driven designs to improve scalability and lower cloud costs.",
+          "lenses": ["architecture"]
+        },
+        {
+          "text": "Implemented a data warehousing solution for DynamoDB data, using Rockset for storage and an AWS-hosted .NET microservice to deliver admin-level reporting at low cost.",
+          "lenses": ["architecture"]
+        },
+        {
+          "text": "Established company-wide code quality standards, naming conventions, and a Git strategy with required PR reviews, static code analysis, and pipeline build checks.",
+          "lenses": ["leadership"]
+        },
+        {
+          "text": "Built a consumer-facing Angular web application that lets users create challenges and track health metrics."
+        },
+        {
+          "text": "Integrated user device health tracking in .NET 6 to automatically track health goals for participating users."
+        }
+      ]
+    },
+    {
+      "name": "Slalom Build",
+      "position": "Consultant",
+      "location": "Chicago, IL",
+      "startDate": "2019-08-01",
+      "endDate": "2022-03-01",
+      "highlights": [
+        {
+          "text": "Built .NET Core 3 microservices for a natural gas pipeline: a FluentValidation service enforcing post-Enron regulations on whether each transfer is legal and feasible, and a traffic-flow service that identifies valid transfer times for orders.",
+          "lenses": ["architecture", "consulting"]
+        },
+        {
+          "text": "Built React web applications with custom design libraries for an automotive seller (online car buying and selling; Sass, Tailwind) and a regional healthcare provider (static builds and CMS tooling that let copywriters publish without deployments).",
+          "lenses": ["consulting"]
+        },
+        {
+          "text": "Collaborated with directors on client technical proposals, including architecture diagrams and tech stack recommendations, and mentored junior engineers.",
+          "lenses": ["consulting", "leadership"]
+        }
+      ]
+    },
+    {
+      "name": "NCC Media (now Ampersand)",
+      "position": "Developer",
+      "location": "Chicago, IL",
+      "startDate": "2018-10-01",
+      "endDate": "2019-08-01",
+      "summary": "Angular, .NET Core.",
+      "highlights": []
+    },
+    {
+      "name": "Evolent Health",
+      "position": "C# .NET Developer",
+      "location": "Chicago, IL",
+      "startDate": "2018-04-01",
+      "endDate": "2018-10-01",
+      "summary": ".NET ETL.",
+      "highlights": []
+    },
+    {
+      "name": "NELIX Inc.",
+      "position": "C# .NET Developer / Consultant",
+      "location": "Rolling Meadows, IL",
+      "startDate": "2017-05-01",
+      "endDate": "2018-02-01",
+      "summary": ".NET, Angular.",
+      "highlights": []
+    }
+  ],
+  "skills": [
+    {
+      "name": "Languages & Frameworks",
+      "keywords": ["C#/.NET", "Java", "TypeScript/JavaScript", "Angular", "React", "Sass", "Tailwind"]
+    },
+    {
+      "name": "Cloud & Data",
+      "keywords": ["AWS Lambda", "DynamoDB", "AWS", "Azure", "MSSQL", "MySQL", "NoSQL database design", "ETL"]
+    },
+    {
+      "name": "Architecture",
+      "keywords": ["Cloud-first architecture", "Event-driven architecture", "Microservices", "RESTful APIs", "Scaling under load"]
+    },
+    {
+      "name": "Leadership & Practices",
+      "keywords": ["Team management", "Incident response", "Code review", "CI/CD", "Release management", "Git", "Static code analysis"]
+    }
+  ],
+  "education": [],
+  "projects": []
+}

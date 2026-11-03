@@ -1,0 +1,376 @@
+---
+// RES-06 .. RES-09 — the résumé rendered from resume.json: real HTML text, PDF link in the first screen,
+// dates in a left gutter above 960px, print stylesheet that is the PDF.
+import Base from '@/layouts/Base.astro';
+import Timeline from '@/components/resume/Timeline.astro';
+import {
+  resume,
+  highlightText,
+  highlightEvidence,
+  personJsonLd,
+  roleAnchor,
+  workStart,
+  workEnd,
+  yearsOfExperience,
+} from '@/lib/resume';
+import { formatMonthYear } from '@/lib/dates';
+
+const b = resume.basics;
+const years = yearsOfExperience();
+const site = (Astro.site ?? new URL('https://mika-net.io')).origin;
+const profiles = b.profiles.filter((p) => /^https?:\/\//.test(p.url));
+const location = [b.location?.city, b.location?.region].filter(Boolean).join(', ');
+const jsonLd = [
+  personJsonLd(site),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    mainEntity: { '@id': `${site}/#person` },
+    url: `${site}/resume/`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${site}/` },
+      { '@type': 'ListItem', position: 2, name: 'Résumé', item: `${site}/resume/` },
+    ],
+  },
+];
+---
+
+<Base
+  title="Résumé"
+  description={`${b.name}, ${b.label}: ${years}+ years of cloud-first, event-driven systems on AWS and .NET; currently leading nine engineers on a healthcare navigation product used by millions.`}
+  type="profile"
+  jsonLd={jsonLd}
+  wide
+>
+  <article class="resume" id="resume">
+    <header class="top">
+      <div>
+        <h1>{b.name}</h1>
+        <p class="meta">
+          <span class="k">role=</span>{b.label.toLowerCase()}{'  '}
+          <span class="k">years=</span>{years}+{'  '}
+          {location && <><span class="k">location=</span>{location.toLowerCase()} · remote{'  '}</>}
+          <span class="k">email=</span><a href={`mailto:${b.email}`}>{b.email}</a>
+        </p>
+      </div>
+      <p class="download">
+        <a class="btn btn--primary" href="/resume.pdf" download="Michael_Johnson_Resume.pdf">Download PDF</a>
+        <a class="json" href="/resume.json">resume.json</a>
+      </p>
+    </header>
+
+    <p class="summary">{b.summary}</p>
+
+    <div class="screen-only">
+      <Timeline />
+    </div>
+
+    <section aria-labelledby="skills-h">
+      <h2 id="skills-h">Skills</h2>
+      <dl class="skills">
+        {
+          resume.skills.map((s) => (
+            <div>
+              <dt>{s.name}</dt>
+              <dd>{s.keywords.join(', ')}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <section aria-labelledby="exp-h">
+      <h2 id="exp-h">Experience</h2>
+      {
+        resume.work.map((w) => {
+          const start = workStart(w);
+          const end = w.endDate ? formatMonthYear(workEnd(w)) : 'present';
+          return (
+            <article class="role" id={roleAnchor(w)}>
+              <p class="when meta">
+                <time datetime={w.startDate}>{formatMonthYear(start)}</time> – {end}
+                {w.location && <span class="loc">{w.location}</span>}
+              </p>
+              <div class="what">
+                <h3>
+                  {w.position} <span class="at">at</span> {w.name}
+                </h3>
+                {w.summary && <p class="role-summary">{w.summary}</p>}
+                {w.highlights.length > 0 && (
+                  <ul>
+                    {w.highlights.map((h) => {
+                      const ev = highlightEvidence(h);
+                      return (
+                        <li>
+                          {highlightText(h)}
+                          {ev && (
+                            <a class="evidence" href={ev}>
+                              evidence
+                            </a>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
+            </article>
+          );
+        })
+      }
+    </section>
+
+    {
+      resume.education.length > 0 && (
+        <section aria-labelledby="edu-h">
+          <h2 id="edu-h">Education</h2>
+          {resume.education.map((e) => (
+            <article class="role">
+              <p class="when meta">
+                {e.startDate} – {e.endDate ?? 'present'}
+              </p>
+              <div class="what">
+                <h3>{e.institution}</h3>
+                <p>{[e.studyType, e.area].filter(Boolean).join(', ')}</p>
+              </div>
+            </article>
+          ))}
+        </section>
+      )
+    }
+
+    <section aria-labelledby="links-h" class="profiles">
+      <h2 id="links-h">Elsewhere</h2>
+      <ul>
+        {
+          profiles.map((p) => (
+            <li>
+              <span class="k">{p.network.toLowerCase()}=</span>
+              <a href={p.url} rel="me noopener">{p.url.replace(/^https?:\/\//, '')}</a>
+            </li>
+          ))
+        }
+        <li>
+          <span class="k">web=</span><a href={site}>{site.replace(/^https?:\/\//, '')}</a>
+        </li>
+      </ul>
+    </section>
+  </article>
+</Base>
+
+<style>
+  .resume {
+    max-width: var(--measure-wide);
+  }
+  .top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4) var(--space-8);
+    align-items: flex-start;
+    margin-bottom: var(--space-6);
+  }
+  .top h1 {
+    margin-bottom: var(--space-2);
+  }
+  .top .meta a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .top .meta a:hover {
+    color: var(--accent);
+  }
+  .download {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .json {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--fg-muted);
+  }
+  .summary {
+    max-width: var(--measure);
+    font-size: var(--text-lg);
+    line-height: 1.5;
+    margin-bottom: var(--space-6);
+  }
+  h2 {
+    font-size: var(--text-lg);
+    margin-top: var(--space-10, 40px);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--line);
+  }
+  .skills {
+    margin: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+  .skills div {
+    display: grid;
+    grid-template-columns: minmax(160px, 220px) 1fr;
+    gap: var(--space-4);
+  }
+  .skills dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--fg-muted);
+    padding-top: 3px;
+  }
+  .skills dd {
+    margin: 0;
+  }
+  .role {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-1) var(--space-6);
+    padding: var(--space-4) 0;
+    border-bottom: 1px dashed var(--line);
+    scroll-margin-top: var(--space-8);
+  }
+  .role:last-child {
+    border-bottom: 0;
+  }
+  .when {
+    margin: 0;
+  }
+  .when .loc {
+    display: block;
+    color: var(--fg-faint);
+  }
+  .what h3 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-md);
+  }
+  .what h3 .at {
+    font-weight: 400;
+    color: var(--fg-faint);
+  }
+  .role-summary {
+    color: var(--fg-muted);
+    margin-bottom: var(--space-2);
+  }
+  .what ul {
+    margin: 0;
+    padding-left: 1.2em;
+  }
+  .what li + li {
+    margin-top: var(--space-2);
+  }
+  .evidence {
+    margin-left: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+  .profiles ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+  .profiles li + li {
+    margin-top: var(--space-1);
+  }
+  @media (min-width: 960px) {
+    .role {
+      grid-template-columns: 170px 1fr;
+    }
+    .when {
+      padding-top: 3px;
+    }
+  }
+  @media (max-width: 639px) {
+    .skills div {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+  }
+
+  /* RES-09 — print is the PDF */
+  @media print {
+    @page {
+      size: Letter;
+      margin: 0.5in 0.55in;
+    }
+    :global(html) {
+      font-size: 9pt;
+      line-height: 1.38;
+    }
+    h2 {
+      break-after: avoid;
+      margin-top: 14pt;
+      padding-bottom: 3pt;
+    }
+    .what h3 {
+      break-after: avoid;
+    }
+    .what li + li {
+      margin-top: 1.5pt;
+    }
+    .when {
+      white-space: nowrap;
+    }
+    .skills {
+      gap: 2pt;
+    }
+    .top {
+      margin-bottom: 8pt;
+    }
+    .top .meta {
+      font-size: 8pt;
+    }
+    :global([data-theme='dark']),
+    :global(:root) {
+      --bg: #ffffff;
+      --bg-elev: #ffffff;
+      --bg-inset: #f2f2f2;
+      --fg: #111111;
+      --fg-muted: #444444;
+      --fg-faint: #666666;
+      --accent: #0a6b3f;
+      --accent-dim: #3f9a6c;
+      --amber: #8a5f00;
+      --line: #cccccc;
+      --line-strong: #999999;
+    }
+    :global(.site-header),
+    :global(.site-footer),
+    :global(.skip),
+    .download,
+    .screen-only,
+    .evidence {
+      display: none !important;
+    }
+    :global(main) {
+      padding: 0;
+      max-width: none;
+    }
+    .resume {
+      max-width: none;
+    }
+    .summary {
+      font-size: 11pt;
+    }
+    .role {
+      break-inside: auto;
+      grid-template-columns: 118px 1fr;
+      padding: 5pt 0;
+    }
+    .skills div {
+      grid-template-columns: 150px 1fr;
+    }
+    .profiles a::after {
+      content: none;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+</style>
