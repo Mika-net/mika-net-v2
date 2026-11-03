@@ -167,6 +167,18 @@ The `environment:production` subjects require the matching GitHub Environments t
 
 **INF-50** The 2025 code (DynamoDB table `blog-content-dev`, Secrets Manager secret, two IAM policies) moves unchanged into `legacy/` with its local state file git-ignored there, in the first PR of the rebuild. It is destroyed by `terraform destroy` run locally by Michael (or by an agent with his explicit go-ahead in the task) only after the Native AOT measurements for the Phase 2 post are taken (`docs/DESIGN.md` §4). The `mika-net-api` SAM stack is deleted the same way (`sam delete`). Until then nothing in `legacy/` is touched.
 
+## Implementation notes — 2026-11-03 (draft, nothing applied)
+
+The repository now holds the code described above, written plan-only. Deviations from the text, each deliberate:
+
+- **Deploy roles live in the environment roots, not in `global`** (INF-23). `mika-net-site-deploy-dev` is created by `envs/dev` and `-prod` by `envs/prod`, because the bucket and distribution ARNs they are scoped to are only known there; `global` keeps the OIDC provider and the two infrastructure roles. The scoping in the INF-23 table is honoured exactly; only the file location moved. Outputs `role_arn_site_deploy` come from the env roots accordingly.
+- **Router fixtures are a Node script** (`modules/static-site/router.test.mjs`, 11 cases), not `terraform test`, because `terraform test` cannot execute CloudFront Functions JavaScript. The `validate` job runs it.
+- **`plan.yml` has a `validate` job that needs no AWS**: `fmt -check`, `init -backend=false`, `validate`, `tflint` (with the AWS ruleset, `.tflint.hcl`) on all three roots, plus the router fixtures. It runs from the first PR; the `plan` job and `apply.yml` are guarded by `if: vars.AWS_ROLE_ARN_* != ''` and stay silent until the bootstrap has produced the repository variables (INF-41).
+- **Reusable role module**: `modules/github-oidc-role` builds one role per (repository, subject) pair; the four roles in INF-23 are four instances of it.
+- The environment roots look up the certificate, zone and OIDC provider by name (`data` sources), so they carry no dependency on `global`'s state file.
+- `.terraform-version` pins 1.17.1 (the current release when written); `required_version` stays `>= 1.11` per INF-01.
+- The 2025 code is moved verbatim into `legacy/` with its local state git-ignored, per INF-50.
+
 ## Acceptance criteria
 
 - [ ] `terraform fmt -check`, `validate`, `tflint` clean in all three roots; lockfiles committed.
