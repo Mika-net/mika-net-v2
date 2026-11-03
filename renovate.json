@@ -1,0 +1,33 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":pinDigests",
+    "helpers:pinGitHubActionDigests",
+    "docker:pinDigests"
+  ],
+  "schedule": ["before 6am on monday"],
+  "timezone": "America/Chicago",
+  "labels": ["deps"],
+  "automerge": false,
+  "packageRules": [
+    {
+      "description": "Group routine npm minors and patches into one weekly PR",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "npm minor and patch updates"
+    },
+    {
+      "description": "Astro majors get their own PR and a careful read",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["astro", "@astrojs/mdx", "@astrojs/rss", "@astrojs/sitemap"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "astro major"
+    },
+    {
+      "description": "GitHub Actions: one PR for all digest bumps",
+      "matchManagers": ["github-actions"],
+      "groupName": "github actions"
+    }
+  ]
+}

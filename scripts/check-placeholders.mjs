@@ -7,7 +7,9 @@ import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 const dist = 'dist';
-const strict = process.env.STRICT_PLACEHOLDERS === '1' || process.env.SITE_URL === 'https://mika-net.io';
+const strict =
+  process.env.STRICT_PLACEHOLDERS === '1' ||
+  (process.env.STRICT_PLACEHOLDERS !== '0' && process.env.SITE_URL === 'https://mika-net.io');
 const errors = [];
 const warnings = [];
 

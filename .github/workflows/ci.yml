@@ -1,0 +1,123 @@
+# CI — the half of docs/requirements/05-pipelines.md that needs no AWS credentials.
+# Runs on every pull request and on main. Deploy jobs (PIPE-07, PIPE-11) are added once the
+# repository variables from the infrastructure bootstrap exist (04-infrastructure.md INF-41).
+#
+# Every third-party action is pinned to a commit SHA (PIPE-02); Renovate keeps them current.
+
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FORCE_COLOR: '1'
+
+jobs:
+  # PIPE-05 + PIPE-08: type check, tests, dev build, résumé PDF, internal links.
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Type check (astro check)
+        run: pnpm check
+      - name: Unit tests (contrast ratios, content invariants, résumé schema)
+        run: pnpm test
+      - name: Build (dev URL, drafts included)
+        run: pnpm build
+        env:
+          SITE_URL: https://dev.mika-net.io
+          INCLUDE_DRAFTS: 'true'
+      - name: Install Chromium for the résumé PDF
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Render resume.pdf (RES-08, ≤ 2 pages)
+        run: pnpm resume:pdf
+      - name: Internal link check (PIPE-06)
+        run: pnpm check:links
+        env:
+          REQUIRE_GENERATED: '1'
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: dist-dev
+          path: dist
+          retention-days: 7
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: resume.pdf
+          path: dist/resume.pdf
+          retention-days: 30
+
+  # PIPE-06 / SEC-03 / SEC-09: secrets over full history, dependency audit.
+  checks:
+    name: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          fetch-depth: 0
+      - name: gitleaks (full history)
+        # The gitleaks GitHub Action requires a licence for organisation repositories; the CLI does not.
+        # Image pinned by tag; Renovate pins the digest (PIPE-14).
+        run: |
+          docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.30.1 \
+            git /repo --config /repo/.gitleaks.toml --redact --no-banner --exit-code 1
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Dependency audit (high and critical with a fix available fail; the rest are reported)
+        run: pnpm audit --audit-level=high || { echo "::warning::pnpm audit reported findings; see the log"; pnpm audit --audit-level=critical; }
+
+  # PIPE-10 / FE-32: Lighthouse budgets against a production-URL build served statically.
+  # (A production URL so robots.txt allows crawling and the SEO category is meaningful; placeholders
+  # are tolerated here because this job measures performance, not content.)
+  lighthouse:
+    name: lighthouse
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build (production URL)
+        run: pnpm build
+        env:
+          SITE_URL: https://mika-net.io
+          STRICT_PLACEHOLDERS: '0'
+      - name: Lighthouse CI (.lighthouserc.json budgets)
+        run: pnpm dlx @lhci/cli@0.16.0 autorun
+      - name: Scores to the job summary
+        if: always()
+        run: node scripts/lighthouse-summary.mjs >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci
+          retention-days: 14

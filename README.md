@@ -1,6 +1,6 @@
 # mika-net.io
 
-[![Repository](https://img.shields.io/badge/repo-Mika--net%2FMika--netv2-0b0f14)](https://github.com/Mika-net/Mika-netv2)
+[![ci](https://github.com/Mika-net/Mika-netv2/actions/workflows/ci.yml/badge.svg)](https://github.com/Mika-net/Mika-netv2/actions/workflows/ci.yml)
 
 Michael Johnson's site: writing under the *Lessons Distilled* imprint, a résumé that is generated from one data file, and a worked example of a static site shipped the way production software is shipped.
 
@@ -32,6 +32,7 @@ pnpm install --frozen-lockfile
 pnpm dev            # http://localhost:4321
 pnpm build          # dist/ with post-build checks
 pnpm test
+pnpm verify         # what CI runs: check, test, build, internal links
 ```
 
 ## Publishing a post

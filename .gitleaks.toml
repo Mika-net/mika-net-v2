@@ -1,0 +1,22 @@
+# SEC-03 — gitleaks configuration. Default rules plus one for NextAuth-style base64 secrets.
+title = "mika-net.io"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "nextauth-style-base64-secret"
+description = "A 40+ character base64 value assigned to a *_SECRET or *_KEY variable"
+regex = '''(?i)(?:[A-Z0-9_]*(?:SECRET|_KEY|TOKEN))\s*[=:]\s*["']?([A-Za-z0-9+/]{40,}={0,2})["']?'''
+secretGroup = 1
+entropy = 4.0
+
+[allowlist]
+description = "Documentation that talks about secrets without containing any"
+paths = [
+  '''docs/.*\.md$''',
+  '''pnpm-lock\.yaml$''',
+]
+regexes = [
+  '''TODO\(michael\)''',
+]

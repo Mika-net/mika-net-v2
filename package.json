@@ -15,7 +15,9 @@
     "test": "vitest run",
     "new": "node scripts/new.mjs",
     "migrate:posts": "node scripts/migrate-posts.mjs",
-    "resume:pdf": "node scripts/render-resume-pdf.mjs"
+    "resume:pdf": "node scripts/render-resume-pdf.mjs",
+    "check:links": "node scripts/check-links.mjs",
+    "verify": "pnpm check && pnpm test && pnpm build && pnpm check:links"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.1.1",
@@ -33,5 +35,11 @@
     "typescript": "^6.0.3",
     "vitest": "^5.0.5",
     "playwright": "^1.63.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp"
+    ]
   }
 }

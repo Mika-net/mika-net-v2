@@ -28,13 +28,15 @@ This repository (`Mika-net/Mika-netv2`, public) is Michael Johnson's personal si
 ## Working style
 
 - Build vertically: tokens → base layout → one page end to end → the rest. Open a PR early; the dev URL is the review surface.
-- Conventional Commits with requirement IDs in the body (`feat(resume): render /resume/ from resume.json (RES-06, RES-07)`).
+- Conventional Commits with requirement IDs in the body (`feat(resume): render /resume/ from resume.json (RES-06, RES-07)`). **Commits are authored by Michael alone: never add `Co-Authored-By`, `Claude-Session` or any other agent trailer** (Michael's instruction, 2026-11-03; it affects his copyright claim).
 - Every PR description lists the requirement IDs it covers and any it defers, with a reason.
 - Prefer the smallest dependency; justify every new one in one line.
 - When the `frontend-design` skill is available, load it before the first visual pass with `docs/requirements/03-frontend.md` as the brief. The aesthetic is "restrained terminal": dark-first on warm graphite, IBM Plex Mono headings, one amber-phosphor accent (VT220) with a soft green secondary, no glow, no gradients, no glitch.
 - Verify before claiming done: run the acceptance criteria in the requirement file and paste the evidence (command output, Lighthouse scores, screenshots) in the PR.
 
-## State of the code (2026-10-25)
+## State of the code (2026-11-03)
+
+CI runs on every PR and on `main` (`.github/workflows/ci.yml`: build + tests + type check + résumé PDF + internal links; gitleaks + audit; Lighthouse budgets) with no AWS involved yet. Required checks for branch protection: `build`, `checks`, `lighthouse`. Run the same locally with `pnpm verify`.
 
 A front-end prototype exists: tokens, layout, all MVP routes, the four migrated posts, the résumé page with its PDF, RSS, sitemap, robots, tests. No AWS, no CI, no OG images, no giscus yet. See README.md "Prototype status" for what is covered and what is deferred, and `docs/HUMAN-TASKS.md` for the placeholders only Michael can fill (`TODO(michael)`; a production build refuses them).
 
